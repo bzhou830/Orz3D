@@ -43,15 +43,18 @@ Window::WindowClass::~WindowClass()
     UnregisterClass(wndClassName, GetInstance());
 }
 
+
 const char* Window::WindowClass::GetName() noexcept
 {
     return wndClassName;
 }
 
+
 HINSTANCE Window::WindowClass::GetInstance() noexcept
 {
     return wndClass.hInst;
 }
+
 
 Window::Window(int width, int height, const char* name) noexcept
 {
