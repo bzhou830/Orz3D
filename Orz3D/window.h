@@ -24,6 +24,9 @@ public:
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 private:
+	static LRESULT CALLBACK WndProcSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     int width;
     int height;
     HWND hWnd;

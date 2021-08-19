@@ -1,8 +1,8 @@
-#include <Windows.h>
+#include "BzWin.h"
 #include "window.h"
 
 
-int WinMain(HINSTANCE hInstance, 
+int WINAPI WinMain(HINSTANCE hInstance,
     HINSTANCE hPrevInstance, 
     LPSTR lpCmdLine, 
     int nShowCmd)
