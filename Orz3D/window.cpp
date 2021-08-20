@@ -44,7 +44,9 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 }
 
 
-Window::Window(int width, int height, const char* name) noexcept
+Window::Window(int width, int height, const char* name) noexcept :
+	width(width), 
+	height(height)
 {
     RECT wr{ 0 };
     wr.left = 100;
