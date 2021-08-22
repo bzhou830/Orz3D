@@ -1,4 +1,3 @@
-#include "BzWin.h"
 #include "window.h"
 
 
@@ -10,17 +9,32 @@ int WINAPI WinMain(
 	_In_ int nCmdShow                  // show state
 )
 {
-    Window window{ 800, 600, "Orz.3D" };
+	try 
+	{
+		Window window{ 800, 600, "Orz.3D" };
+		MSG msg{ 0 };
 
-
-    MSG msg{ 0 };
-    while (WM_QUIT != msg.message)
-    {
-        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
-    return static_cast<int>(msg.wParam);
+		while (WM_QUIT != msg.message)
+		{
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		}
+		return static_cast<int>(msg.wParam);
+	}
+	catch (const BzException& e)
+	{
+		MessageBox(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
+	}
+	catch (const std::exception& e) 
+	{
+		MessageBox(nullptr, e.what(), "std::exception", MB_OK | MB_ICONEXCLAMATION);
+	}
+	catch (...)
+	{
+		MessageBox(nullptr, "No details available", "Unknown Exception", MB_OK | MB_ICONEXCLAMATION);
+	}
+	return -1;
 }

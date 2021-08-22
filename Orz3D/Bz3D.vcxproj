@@ -118,11 +118,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BzException.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="window.cpp" />
     <ClCompile Include="WindowsMessageMap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BzException.h" />
     <ClInclude Include="BzWin.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="window.h" />

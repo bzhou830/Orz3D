@@ -24,6 +24,9 @@
     <ClCompile Include="window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BzException.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BzWin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BzException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
