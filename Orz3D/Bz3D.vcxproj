@@ -76,6 +76,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -86,6 +87,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -119,13 +121,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BzException.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="window.cpp" />
     <ClCompile Include="WindowsMessageMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BzException.h" />
     <ClInclude Include="BzWin.h" />
+    <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="Mouse.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="window.h" />
     <ClInclude Include="WindowsMessageMap.h" />

@@ -1,6 +1,8 @@
 #pragma once
 #include "BzWin.h"
 #include "BzException.h"
+#include "Keyboard.h"
+#include "Mouse.h"
 
 class Window
 {
@@ -44,6 +46,8 @@ private:
     int width;
     int height;
     HWND hWnd;
+	Keyboard kbd;
+	Mouse mouse;
 };
 
 // error exception helper macro
