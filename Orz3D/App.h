@@ -10,6 +10,6 @@ public:
 	int Run();
 private:
 	void doFrame();
-	Window window;
+	Window wnd;
 };
 

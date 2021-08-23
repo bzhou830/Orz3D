@@ -71,6 +71,14 @@ Window::Window(int width, int height, const char* name):
 	
     // show window
     ShowWindow(hWnd, SW_SHOWDEFAULT);
+
+	// create graphics object
+	pGfx = std::make_unique<Graphics>(hWnd);
+}
+
+Graphics& Window::Gfx()
+{
+	return *pGfx;
 }
 
 

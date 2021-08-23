@@ -1,11 +1,11 @@
 #include "App.h"
 
-App::App() : window(800, 600, "app")
+App::App() : wnd(800, 600, "app")
 { }
 
 
 App::App(int width, int height, const char* name) 
-	: window(width, height, name)
+	: wnd(width, height, name)
 { }
 
 
@@ -15,7 +15,7 @@ App::~App()
 
 void App::doFrame()
 {
-
+	wnd.Gfx().EndFrame();
 }
 
 

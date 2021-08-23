@@ -3,6 +3,8 @@
 #include "BzException.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include "Graphics.h"
+#include <memory>
 
 class Window
 {
@@ -39,6 +41,7 @@ public:
     ~Window();
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
+	Graphics& Gfx();
 private:
 	static LRESULT CALLBACK WndProcSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -48,6 +51,7 @@ private:
     HWND hWnd;
 	Keyboard kbd;
 	Mouse mouse;
+	std::unique_ptr<Graphics> pGfx;
 };
 
 // error exception helper macro
