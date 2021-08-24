@@ -1,4 +1,6 @@
 #include "App.h"
+#include <sstream>
+#include <iomanip>
 
 App::App() : wnd(800, 600, "app")
 { }
@@ -15,6 +17,12 @@ App::~App()
 
 void App::doFrame()
 {
+	const float t = timer.Mark();
+	std::ostringstream oss;
+	oss << "Time elapsed: " << std::setprecision(3) << std::fixed << t << "s";
+	wnd.SetTitle(oss.str());
+
+	wnd.Gfx().ClearBuffer(0, 0, 1);
 	wnd.Gfx().EndFrame();
 }
 

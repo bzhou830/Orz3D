@@ -32,10 +32,21 @@ Graphics::Graphics(HWND hWnd)
 								  pDevice.GetAddressOf(),
 								  nullptr,
 								  pContext.GetAddressOf());
+
+	// 获取back buffer，将back buffer bind到render target上，这样就可以通过render target来操作back buffer.
+	ComPtr<ID3D11Resource> pBackBuffer;
+	pSwap->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(pBackBuffer.GetAddressOf()));
+	pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, pTarget.GetAddressOf());
 }
 
 Graphics::~Graphics()
 {
+}
+
+void Graphics::ClearBuffer(float red, float green, float blue) noexcept
+{
+	const float color[] = { red, green, blue, 1.0f };
+	pContext->ClearRenderTargetView(pTarget.Get(), color);
 }
 
 void Graphics::EndFrame()

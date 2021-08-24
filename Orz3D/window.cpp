@@ -3,8 +3,8 @@
 #include "resource.h"
 #include <sstream>
 
+//窗口类相关代码
 Window::WindowClass Window::WindowClass::wndClass;
-
 
 Window::WindowClass::WindowClass() noexcept
     :hInst(GetModuleHandle(nullptr))
@@ -25,25 +25,22 @@ Window::WindowClass::WindowClass() noexcept
     RegisterClassEx(&wc);
 }
 
-
 Window::WindowClass::~WindowClass()
 {
     UnregisterClass(wndClassName, GetInstance());
 }
-
 
 const char* Window::WindowClass::GetName() noexcept
 {
     return wndClassName;
 }
 
-
 HINSTANCE Window::WindowClass::GetInstance() noexcept
 {
     return wndClass.hInst;
 }
 
-
+//窗口相关代码
 Window::Window(int width, int height, const char* name):
 	width(width), 
 	height(height)
@@ -72,7 +69,7 @@ Window::Window(int width, int height, const char* name):
     // show window
     ShowWindow(hWnd, SW_SHOWDEFAULT);
 
-	// create graphics object
+	// 创建 graphics 对象
 	pGfx = std::make_unique<Graphics>(hWnd);
 }
 
@@ -81,12 +78,18 @@ Graphics& Window::Gfx()
 	return *pGfx;
 }
 
+void Window::SetTitle(const std::string& title)
+{
+	if (SetWindowText(hWnd, title.c_str()) == 0)
+	{
+		throw CHWND_LAST_EXCEPT();
+	}
+}
 
 Window::~Window()
 {
     DestroyWindow(hWnd);
 }
-
 
 LRESULT CALLBACK Window::WndProcSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
 {
@@ -102,13 +105,11 @@ LRESULT CALLBACK Window::WndProcSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-
 LRESULT CALLBACK Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	Window* const pWind = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 	return pWind->HandleMsg(hWnd, msg, wParam, lParam);
 }
-
 
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {

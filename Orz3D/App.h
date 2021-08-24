@@ -1,5 +1,6 @@
 #pragma once
 #include "window.h"
+#include "BzTimer.h"
 
 class App
 {
@@ -11,5 +12,6 @@ public:
 private:
 	void doFrame();
 	Window wnd;
+	BzTimer timer;
 };
 
