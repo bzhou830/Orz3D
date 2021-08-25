@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-float4 main(float4 Pos : SV_Position) : SV_Target
+float4 main(float3 color : Color) : SV_Target
 {
-	return float4(0.5f, 0.1f, 0.2f, 1.0f);
+	return float4(color, 1.0f);
 }
