@@ -73,7 +73,7 @@ Graphics::Graphics(HWND hWnd)
 void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 {
 	const float color[] = { red, green, blue, 1.0f };
-	pContext->ClearRenderTargetView(pTarget.Get(), color);
+	GFX_THROW_INFO_ONLY(pContext->ClearRenderTargetView(pTarget.Get(), color));
 }
 
 void Graphics::DrawTestTriangle()
@@ -110,45 +110,44 @@ void Graphics::DrawTestTriangle()
 	// Bind vertex buffer to pipeline
 	const UINT stride = sizeof(Vertex);
 	const UINT offset = 0u;
-	pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
+	GFX_THROW_INFO_ONLY(pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset));
 
 	// create vertex shader
 	ComPtr<ID3D11VertexShader> pVertexShader;
-	ComPtr<ID3DBlob> pVsBlob;
-	GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso", pVsBlob.GetAddressOf()));
-	GFX_THROW_INFO(pDevice->CreateVertexShader(pVsBlob->GetBufferPointer(), pVsBlob->GetBufferSize(), nullptr, pVertexShader.GetAddressOf()));
+	ComPtr<ID3DBlob> pBlob;
+	GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso", pBlob.GetAddressOf()));
+	GFX_THROW_INFO(pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, pVertexShader.GetAddressOf()));
 	// bind vertex shader
-	pContext->VSSetShader(pVertexShader.Get(), nullptr, 0u);
+	GFX_THROW_INFO_ONLY(pContext->VSSetShader(pVertexShader.Get(), nullptr, 0u));
 
 	// input (vertex) layout (2d position only)
 	ComPtr<ID3D11InputLayout> pInputLayout;
-
 	const D3D11_INPUT_ELEMENT_DESC ied[] =
 	{
+		// "Position" 的声明和vs中的输入名称是一一对应的
 		{ "Position", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	GFX_THROW_INFO(pDevice->CreateInputLayout(
 		ied, (UINT)std::size(ied),
-		pVsBlob->GetBufferPointer(),
-		pVsBlob->GetBufferSize(),
+		pBlob->GetBufferPointer(),
+		pBlob->GetBufferSize(),
 		pInputLayout.GetAddressOf()));
 
 	// bind vertex layout
-	pContext->IASetInputLayout(pInputLayout.Get());
+	GFX_THROW_INFO_ONLY(pContext->IASetInputLayout(pInputLayout.Get()));
 
 	// create pixel shader
 	ComPtr<ID3D11PixelShader> pPixelShader;
-	ComPtr<ID3DBlob> pPsBlob;
-	GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", pPsBlob.GetAddressOf()));
-	GFX_THROW_INFO(pDevice->CreatePixelShader(pPsBlob->GetBufferPointer(), pPsBlob->GetBufferSize(), nullptr, pPixelShader.GetAddressOf()));
+	GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", pBlob.GetAddressOf()));
+	GFX_THROW_INFO(pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, pPixelShader.GetAddressOf()));
 	// bind pixel shader
-	pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
+	GFX_THROW_INFO_ONLY(pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u));
 
 	// bind render target
-	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
+	GFX_THROW_INFO_ONLY(pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr));
 
 	// Set primitive topology to triangle list (groups of 3 vertices)
-	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	GFX_THROW_INFO_ONLY(pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
 	// configure viewport
 	D3D11_VIEWPORT vp;
@@ -177,7 +176,7 @@ void Graphics::EndFrame()
 		}
 		else
 		{
-			GFX_EXCEPT(hr);
+			throw GFX_EXCEPT(hr);
 		}
 	}
 }
@@ -191,11 +190,6 @@ Graphics::HrException::HrException(int line, const char* file, HRESULT hr, std::
 	{
 		info += m;
 		info.push_back('\n');
-	}
-	// remove final newline if exists
-	if (!info.empty())
-	{
-		info.pop_back();
 	}
 }
 
@@ -258,13 +252,7 @@ Graphics::InfoException::InfoException(int line, const char* file, std::vector<s
 		info += m;
 		info.push_back('\n');
 	}
-	// remove final newline if exists
-	if (!info.empty())
-	{
-		info.pop_back();
-	}
 }
-
 
 const char* Graphics::InfoException::what() const noexcept
 {
