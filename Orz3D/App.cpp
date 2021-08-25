@@ -17,12 +17,12 @@ App::~App()
 
 void App::doFrame()
 {
-	const float t = timer.Mark();
-	std::ostringstream oss;
+	const float t = timer.Peek();
+	/*std::ostringstream oss;
 	oss << "Time elapsed: " << std::setprecision(3) << std::fixed << t << "s";
-	wnd.SetTitle(oss.str());
+	wnd.SetTitle(oss.str());*/
+	wnd.Gfx().ClearBuffer(sin(t), cos(1 - t), 1);
 
-	wnd.Gfx().ClearBuffer(0, 0, 1);
 	wnd.Gfx().EndFrame();
 }
 

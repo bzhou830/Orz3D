@@ -123,6 +123,7 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="BzException.cpp" />
     <ClCompile Include="BzTimer.cpp" />
+    <ClCompile Include="DxErr\dxerr.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
@@ -135,6 +136,7 @@
     <ClInclude Include="BzException.h" />
     <ClInclude Include="BzTimer.h" />
     <ClInclude Include="BzWin.h" />
+    <ClInclude Include="DxErr\dxerr.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
@@ -147,6 +149,11 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="bz.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DxErr\DXGetErrorDescription.inl" />
+    <None Include="DxErr\DXGetErrorString.inl" />
+    <None Include="DxErr\DXTrace.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
