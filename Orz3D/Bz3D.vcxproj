@@ -124,6 +124,7 @@
     <ClCompile Include="BzException.cpp" />
     <ClCompile Include="BzTimer.cpp" />
     <ClCompile Include="DxErr\dxerr.cpp" />
+    <ClCompile Include="DxgiInfoManager.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="BzTimer.h" />
     <ClInclude Include="BzWin.h" />
     <ClInclude Include="DxErr\dxerr.h" />
+    <ClInclude Include="DxgiInfoManager.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
