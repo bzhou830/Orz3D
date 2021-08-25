@@ -30,6 +30,16 @@ public:
 		std::string info;
 		HRESULT hr;
 	};
+	class InfoException : public Exception
+	{
+	public:
+		InfoException(int line, const char* file, std::vector<std::string> infoMsgs) noexcept;
+		const char* what() const noexcept override;
+		const char* GetType() const noexcept override;
+		std::string GetErrorInfo() const noexcept;
+	private:
+		std::string info;
+	};
 	class DeviceRemovedException : public HrException
 	{
 		using HrException::HrException;
@@ -44,6 +54,7 @@ public:
 	Graphics(const Graphics&) = delete;            //拷贝构造函数
 	Graphics& operator=(const Graphics&) = delete; //赋值构造函数
 	void ClearBuffer(float red, float green, float blue) noexcept;
+	void DrawTestTriangle();
 	void EndFrame();
 private:
 #ifndef NDEBUG

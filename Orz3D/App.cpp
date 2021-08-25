@@ -22,7 +22,7 @@ void App::doFrame()
 	oss << "Time elapsed: " << std::setprecision(3) << std::fixed << t << "s";
 	wnd.SetTitle(oss.str());*/
 	wnd.Gfx().ClearBuffer(sin(t), cos(1 - t), 1);
-
+	wnd.Gfx().DrawTestTriangle();
 	wnd.Gfx().EndFrame();
 }
 
