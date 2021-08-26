@@ -18,6 +18,13 @@ App::~App()
 void App::doFrame()
 {
 	const float t = timer.Peek();
+	// Start the Dear ImGui frame
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+	static bool show_demo_window = true;
+	ImGui::ShowDemoWindow(&show_demo_window);
+
 	/*std::pair<int, int> pos = wnd.mouse.GetPos();
 	std::ostringstream oss;*/
 	
@@ -28,6 +35,9 @@ void App::doFrame()
 	wnd.Gfx().ClearBuffer(sin(t), cos(1 - t), 1);
 
 	wnd.Gfx().DrawTestTriangle(t, wnd.mouse.GetPosX()/400.0f - 1.0f, -wnd.mouse.GetPosY() / 300.0f + 1.0f);
+
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	wnd.Gfx().EndFrame();
 }
 

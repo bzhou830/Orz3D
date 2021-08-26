@@ -118,6 +118,19 @@ Graphics::Graphics(HWND hWnd)
 	vp.TopLeftX = 0.0f;
 	vp.TopLeftY = 0.0f;
 	pContext->RSSetViewports(1u, &vp);
+
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplWin32_Init(hWnd);
+	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 }
 
 void Graphics::ClearBuffer(float red, float green, float blue)

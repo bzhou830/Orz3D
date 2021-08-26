@@ -111,10 +111,13 @@ LRESULT CALLBACK Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 	return pWind->HandleMsg(hWnd, msg, wParam, lParam);
 }
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam); 
+
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	//static WindowsMessageMap mm;
 	//OutputDebugString(mm(msg, lParam, wParam).c_str());
+	ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
 	switch (msg)
 	{
 	case WM_DESTROY:
