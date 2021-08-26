@@ -27,7 +27,7 @@ void App::doFrame()
 	
 	wnd.Gfx().ClearBuffer(sin(t), cos(1 - t), 1);
 
-	wnd.Gfx().DrawTestTriangle();
+	wnd.Gfx().DrawTestTriangle(t);
 	wnd.Gfx().EndFrame();
 }
 

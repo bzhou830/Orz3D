@@ -76,7 +76,7 @@ void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 	GFX_THROW_INFO_ONLY(pContext->ClearRenderTargetView(pTarget.Get(), color));
 }
 
-void Graphics::DrawTestTriangle()
+void Graphics::DrawTestTriangle(float angle)
 {
 	HRESULT hr = S_OK;
 	struct Vertex
@@ -103,7 +103,7 @@ void Graphics::DrawTestTriangle()
 		{-0.5f,-0.5f, 0, 0, 255, 0},
 		{-0.3f, 0.3f, 0, 255, 0, 0},
 		{ 0.3f, 0.3f, 0, 0, 255, 0},
-		{ 0.0f,-0.8f, 255, 0, 0, 0},
+		{ 0.0f,-1.0f, 255, 0, 0, 0},
 	};
 	
 	D3D11_BUFFER_DESC bd = { 0 };
@@ -124,7 +124,6 @@ void Graphics::DrawTestTriangle()
 	const UINT stride = sizeof(Vertex);
 	const UINT offset = 0u;
 	GFX_THROW_INFO_ONLY(pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset));
-
 
 	// create index buffer
 	const unsigned short indices[] =
@@ -148,6 +147,38 @@ void Graphics::DrawTestTriangle()
 
 	// bind index buffer
 	pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
+
+	// create constant buffer for transformation matrix
+	struct ConstantBuffer
+	{
+		struct
+		{
+			float element[4][4];
+		} transformation;
+	};
+	const ConstantBuffer cb =
+	{
+		{
+			std::cos(angle),	std::sin(angle),	0.0f,	0.0f,
+			-std::sin(angle),	std::cos(angle),	0.0f,	0.0f,
+			0.0f,				0.0f,				1.0f,	0.0f,
+			0.0f,				0.0f,				0.0f,	1.0f,
+		}
+	};
+	ComPtr<ID3D11Buffer> pConstantBuffer;
+	D3D11_BUFFER_DESC cbd = { 0 };
+	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbd.Usage = D3D11_USAGE_DYNAMIC;
+	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cbd.MiscFlags = 0u;
+	cbd.ByteWidth = sizeof(cb);
+	cbd.StructureByteStride = 0u;
+	D3D11_SUBRESOURCE_DATA csd = { 0 };
+	csd.pSysMem = &cb;
+	GFX_THROW_INFO(pDevice->CreateBuffer(&cbd, &csd, pConstantBuffer.GetAddressOf()));
+
+	// bind constant buffer to vertex shader
+	pContext->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
 
 	// create vertex shader
 	ComPtr<ID3D11VertexShader> pVertexShader;

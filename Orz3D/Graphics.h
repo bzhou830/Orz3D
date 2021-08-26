@@ -54,7 +54,7 @@ public:
 	Graphics(const Graphics&) = delete;            //拷贝构造函数
 	Graphics& operator=(const Graphics&) = delete; //赋值构造函数
 	void ClearBuffer(float red, float green, float blue) noexcept;
-	void DrawTestTriangle();
+	void DrawTestTriangle(float angle);
 	void EndFrame();
 private:
 #ifndef NDEBUG
