@@ -18,16 +18,16 @@ App::~App()
 void App::doFrame()
 {
 	const float t = timer.Peek();
-	std::pair<int, int> pos = wnd.mouse.GetPos();
-	std::ostringstream oss;
+	/*std::pair<int, int> pos = wnd.mouse.GetPos();
+	std::ostringstream oss;*/
 	
 	//oss << "Time elapsed: " << std::setprecision(3) << std::fixed << t << "s";
-	oss << "Pos x: " << pos.first << " y: " << pos.second << std::endl;
-	wnd.SetTitle(oss.str());
+	//oss << "Pos x: " << pos.first << " y: " << pos.second << std::endl;
+	//wnd.SetTitle(oss.str());
 	
 	wnd.Gfx().ClearBuffer(sin(t), cos(1 - t), 1);
 
-	wnd.Gfx().DrawTestTriangle(t);
+	wnd.Gfx().DrawTestTriangle(t, wnd.mouse.GetPosX()/400.0f - 1.0f, -wnd.mouse.GetPosY() / 300.0f + 1.0f);
 	wnd.Gfx().EndFrame();
 }
 
