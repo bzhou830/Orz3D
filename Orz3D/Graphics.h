@@ -53,7 +53,7 @@ public:
 	~Graphics() {};
 	Graphics(const Graphics&) = delete;            //拷贝构造函数
 	Graphics& operator=(const Graphics&) = delete; //赋值构造函数
-	void ClearBuffer(float red, float green, float blue) noexcept;
+	void ClearBuffer(float red, float green, float blue);
 	void DrawTestTriangle(float angle, float x, float y);
 	void EndFrame();
 private:
@@ -64,5 +64,6 @@ private:
 	ComPtr<IDXGISwapChain> pSwap;
 	ComPtr<ID3D11DeviceContext> pContext;
 	ComPtr<ID3D11RenderTargetView> pTarget;
+	ComPtr<ID3D11DepthStencilView> pDSV;
 };
 
