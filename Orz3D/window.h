@@ -43,6 +43,8 @@ public:
     Window& operator=(const Window&) = delete;
     void SetTitle(const std::string& title);
     Graphics& Gfx();
+    Keyboard kbd;
+    Mouse mouse;
 private:
 	static LRESULT CALLBACK WndProcSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -50,8 +52,6 @@ private:
     int width;
     int height;
     HWND hWnd;
-	Keyboard kbd;
-	Mouse mouse;
 	std::unique_ptr<Graphics> pGfx;
 };
 

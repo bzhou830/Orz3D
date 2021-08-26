@@ -3,7 +3,7 @@
 #include <sstream>
 #include <d3dcompiler.h>
 
-#pragma comment(lib,"d3d11.lib")
+#pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
 
 #define GFX_THROW_FAILED(hrcall) if( FAILED( hr = (hrcall) ) ) throw Graphics::HrException( __LINE__,__FILE__,hr )
@@ -78,7 +78,7 @@ void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 
 void Graphics::DrawTestTriangle()
 {
-	HRESULT hr;
+	HRESULT hr = S_OK;
 	struct Vertex
 	{
 		struct  
@@ -91,18 +91,22 @@ void Graphics::DrawTestTriangle()
 			UCHAR r;
 			UCHAR g;
 			UCHAR b;
+			UCHAR a;
 		} color;
 	};
 
 	// create vertex buffer (1 2d triangle at center of screen)
 	const Vertex vertices[] =
-	{  
-		{ 0.0f,0.5f,255,0,0 },
-		{ 0.5f,-0.5f, 0,255,0 },
-		{ -0.5f,-0.5f, 0,0,255 },
+	{
+		{ 0.0f, 0.5f, 255, 0, 0, 0},
+		{ 0.5f,-0.5f, 0, 255, 0, 0},
+		{-0.5f,-0.5f, 0, 0, 255, 0},
+		{-0.3f, 0.3f, 0, 255, 0, 0},
+		{ 0.3f, 0.3f, 0, 0, 255, 0},
+		{ 0.0f,-0.8f, 255, 0, 0, 0},
 	};
 	
-	D3D11_BUFFER_DESC bd = {};
+	D3D11_BUFFER_DESC bd = { 0 };
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.CPUAccessFlags = 0u;
@@ -110,7 +114,7 @@ void Graphics::DrawTestTriangle()
 	bd.ByteWidth = sizeof(vertices);
 	bd.StructureByteStride = sizeof(Vertex);
 
-	D3D11_SUBRESOURCE_DATA sd = {};
+	D3D11_SUBRESOURCE_DATA sd = { 0 };
 	sd.pSysMem = vertices;
 	
 	ComPtr<ID3D11Buffer> pVertexBuffer;
@@ -120,6 +124,30 @@ void Graphics::DrawTestTriangle()
 	const UINT stride = sizeof(Vertex);
 	const UINT offset = 0u;
 	GFX_THROW_INFO_ONLY(pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset));
+
+
+	// create index buffer
+	const unsigned short indices[] =
+	{
+		0,1,2,
+		0,2,3,
+		0,4,1,
+		2,1,5,
+	};
+	ComPtr<ID3D11Buffer> pIndexBuffer;
+	D3D11_BUFFER_DESC ibd = { 0 };
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.Usage = D3D11_USAGE_DEFAULT;
+	ibd.CPUAccessFlags = 0u;
+	ibd.MiscFlags = 0u;
+	ibd.ByteWidth = sizeof(indices);
+	ibd.StructureByteStride = sizeof(unsigned short);
+	D3D11_SUBRESOURCE_DATA isd = { 0 };
+	isd.pSysMem = indices;
+	GFX_THROW_INFO(pDevice->CreateBuffer(&ibd, &isd, pIndexBuffer.GetAddressOf()));
+
+	// bind index buffer
+	pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
 
 	// create vertex shader
 	ComPtr<ID3D11VertexShader> pVertexShader;
@@ -161,15 +189,15 @@ void Graphics::DrawTestTriangle()
 
 	// configure viewport
 	D3D11_VIEWPORT vp;
-	vp.Width = 800;
-	vp.Height = 600;
+	vp.Width    = 800;
+	vp.Height   = 600;
 	vp.MinDepth = 0;
 	vp.MaxDepth = 1;
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 	pContext->RSSetViewports(1u, &vp);
 
-	GFX_THROW_INFO_ONLY(pContext->Draw((UINT)std::size(vertices), 0u));	
+	GFX_THROW_INFO_ONLY(pContext->DrawIndexed((UINT)std::size(indices), 0u, 0u));
 }
 
 void Graphics::EndFrame()
