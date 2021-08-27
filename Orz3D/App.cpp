@@ -35,6 +35,8 @@ void App::doFrame()
 	wnd.Gfx().ClearBuffer(sin(t), cos(1 - t), 1);
 
 	wnd.Gfx().DrawTestTriangle(t, wnd.mouse.GetPosX()/400.0f - 1.0f, -wnd.mouse.GetPosY() / 300.0f + 1.0f);
+	// 画两个cube的时候可以观察是否存在远处的物体画出来了，但是近处的物体没有画出来的情况
+	//wnd.Gfx().DrawTestTriangle(t, 0.1f, 0.1f);
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

@@ -29,7 +29,7 @@ namespace dx = DirectX;
 Graphics::Graphics(HWND hWnd)
 {
 	DXGI_SWAP_CHAIN_DESC sd = {};
-	sd.BufferDesc.Width = 0;
+	sd.BufferDesc.Width = 0; // 当宽高设置为0的时候back buffer的宽高将设置为和窗口一致
 	sd.BufferDesc.Height = 0;
 	sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	sd.BufferDesc.RefreshRate.Numerator = 0;
@@ -50,10 +50,9 @@ Graphics::Graphics(HWND hWnd)
 	swapCreateFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-	// GFX_THROW_FAILED 中需要用它来检查函数调用的返回值
-	HRESULT hr;
+	HRESULT hr; // GFX_THROW_FAILED 中需要用它来检查函数调用的返回值
 
-	// create device and front/back buffers, and swap chain and rendering context
+	// 创建 device, front/back buffers, 以及 swap chain 和 rendering context
 	GFX_THROW_INFO(D3D11CreateDeviceAndSwapChain(nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
@@ -68,7 +67,6 @@ Graphics::Graphics(HWND hWnd)
 		pContext.GetAddressOf()));
 
 	// 获取back buffer，将back buffer bind到render target上，这样就可以通过render target来操作back buffer.
-	ComPtr<ID3D11Resource> pBackBuffer;
 	GFX_THROW_INFO(pSwap->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
 	GFX_THROW_INFO(pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, pTarget.GetAddressOf()));
 
@@ -78,7 +76,7 @@ Graphics::Graphics(HWND hWnd)
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	ComPtr<ID3D11DepthStencilState> pDSState;
-	GFX_THROW_INFO(pDevice->CreateDepthStencilState(&dsDesc, &pDSState));
+	GFX_THROW_INFO(pDevice->CreateDepthStencilState(&dsDesc, pDSState.GetAddressOf()));
 
 	// bind depth state
 	pContext->OMSetDepthStencilState(pDSState.Get(), 1u);
@@ -95,24 +93,22 @@ Graphics::Graphics(HWND hWnd)
 	descDepth.SampleDesc.Quality = 0u;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	GFX_THROW_INFO(pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
+	GFX_THROW_INFO(pDevice->CreateTexture2D(&descDepth, nullptr, pDepthStencil.GetAddressOf()));
 
 	// create view of depth stensil texture
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
 	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
 	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSV.Texture2D.MipSlice = 0u;
-	GFX_THROW_INFO(pDevice->CreateDepthStencilView(
-		pDepthStencil.Get(), &descDSV, &pDSV
-	));
+	GFX_THROW_INFO(pDevice->CreateDepthStencilView(pDepthStencil.Get(), &descDSV, pDSV.GetAddressOf()));
 
 	// bind depth stensil view to OM
 	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
 
 	// configure viewport
 	D3D11_VIEWPORT vp;
-	vp.Width = 800.0f;
-	vp.Height = 600.0f;
+	vp.Width    = 800.0f;
+	vp.Height   = 600.0f;
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 	vp.TopLeftX = 0.0f;
@@ -224,7 +220,7 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 	const ConstantBuffer cb = {
 		dx::XMMatrixTranspose(
 				dx::XMMatrixRotationX(angle) *
-				dx::XMMatrixTranslation(x, y, 4.0f) *
+				dx::XMMatrixTranslation(x, y, 4.0f + y) *
 				dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 10.0f))
 	};
 	ComPtr<ID3D11Buffer> pConstantBuffer;

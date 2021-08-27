@@ -348,3 +348,9 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# shader binary
+*.cso
+
+# imgui.ini
+/Orz3D/imgui.ini
