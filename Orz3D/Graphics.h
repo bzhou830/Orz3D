@@ -4,6 +4,12 @@
 #include "BzException.h"
 #include "DxgiInfoManager.h"
 
+#include "opencv2/core.hpp"
+#include "opencv2/core/directx.hpp"
+#include "opencv2/core/ocl.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/videoio.hpp"
+
 // 使用ComPtr方便对Com接口函数的管理
 #include <wrl.h>
 template <class T>
@@ -66,5 +72,10 @@ private:
 	ComPtr<ID3D11RenderTargetView> pTarget;
 	ComPtr<ID3D11DepthStencilView> pDSV;
 	ComPtr<ID3D11Resource> pBackBuffer;
+
+	int get_surface(ID3D11Texture2D** ppSurface);
+	cv::VideoCapture   m_cap;
+	cv::Mat            m_frame_bgr;
+	cv::Mat            m_frame_rgba;
 };
 

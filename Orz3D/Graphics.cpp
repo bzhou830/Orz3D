@@ -127,7 +127,10 @@ Graphics::Graphics(HWND hWnd)
 	// Setup Platform/Renderer backends
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
+
+	m_cap.open("d:/repos/cvdx/cvdx/111.mp4");
 }
+
 
 void Graphics::ClearBuffer(float red, float green, float blue)
 {
@@ -135,6 +138,34 @@ void Graphics::ClearBuffer(float red, float green, float blue)
 	GFX_THROW_INFO_ONLY(pContext->ClearRenderTargetView(pTarget.Get(), color));
 	GFX_THROW_INFO_ONLY(pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u));
 }
+
+
+// get media data on DX surface for further processing
+int Graphics::get_surface(ID3D11Texture2D** ppSurface)
+{
+	HRESULT r;
+	if (!m_cap.read(m_frame_bgr))
+		return EXIT_FAILURE;
+
+	cv::cvtColor(m_frame_bgr, m_frame_rgba, cv::COLOR_BGR2RGBA);
+
+	// process video frame on CPU
+	UINT subResource = ::D3D11CalcSubresource(0, 0, 1);
+	D3D11_MAPPED_SUBRESOURCE mappedTex;
+	r = pContext->Map(*ppSurface, subResource, D3D11_MAP_WRITE_DISCARD, 0, &mappedTex);
+	if (FAILED(r))
+	{
+		throw std::runtime_error("surface mapping failed!");
+	}
+
+	cv::Mat m(600, 800, CV_8UC4, mappedTex.pData, mappedTex.RowPitch);
+	m_frame_rgba.copyTo(m);
+
+	pContext->Unmap(*ppSurface, subResource);
+
+	return EXIT_SUCCESS;
+} 
+
 
 void Graphics::DrawTestTriangle(float angle, float x, float y)
 {
@@ -149,24 +180,22 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 		} position;
 		struct 
 		{
-			UCHAR r;
-			UCHAR g;
-			UCHAR b;
-			UCHAR a;
-		} color;
+			float u;
+			float v;
+		} texCoord;
 	};
 
 	// create vertex buffer (1 2d triangle at center of screen)
 	const Vertex vertices[] =
 	{
-		{ -1.0f, -1.0f, -1.0f , 255, 0, 0, 0},
-		{ 1.0f,-1.0f,-1.0f    , 0, 255, 0, 0 },
-		{ -1.0f,1.0f,-1.0f    , 0, 0, 255, 0 },
-		{ 1.0f,1.0f,-1.0f     , 255, 0, 0, 0 },
-		{ -1.0f,-1.0f,1.0f    , 0, 255, 0, 0 },
-		{ 1.0f,-1.0f,1.0f     , 0, 0, 255, 0 },
-		{ -1.0f,1.0f,1.0f     , 255, 0, 0, 0 },
-		{ 1.0f,1.0f,1.0f      , 0, 255, 0, 0 },
+		{ -1.0f, -1.0f, -1.0f  , 0.0f, 1.0f},
+		{ 1.0f,-1.0f,-1.0f     , 0.0f, 0.0f},
+		{ -1.0f,1.0f,-1.0f     , 1.0f, 0.0f},
+		{ 1.0f,1.0f,-1.0f      , 1.0f, 1.0f},
+		{ -1.0f,-1.0f,1.0f     , 1.0f, 1.0f},
+		{ 1.0f,-1.0f,1.0f      , 0.0f, 1.0f},
+		{ -1.0f,1.0f,1.0f      , 0.0f, 0.0f},
+		{ 1.0f,1.0f,1.0f       , 1.0f, 0.0f},
 	};
 	
 	D3D11_BUFFER_DESC bd = { 0 };
@@ -252,7 +281,8 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 	{
 		// "Position" 的声明和vs中的输入名称是一一对应的
 		{ "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(Vertex::position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(Vertex::position), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		//{ "Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(Vertex::position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	GFX_THROW_INFO(pDevice->CreateInputLayout(
 		ied, (UINT)std::size(ied),
@@ -263,12 +293,47 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 	// bind vertex layout
 	GFX_THROW_INFO_ONLY(pContext->IASetInputLayout(pInputLayout.Get()));
 
+	//从文件中读取到图像数据，使用图像数据创建texture
+	
+
+	// create texture resource
+	D3D11_TEXTURE2D_DESC textureDesc = {};
+	textureDesc.Width = 800u;
+	textureDesc.Height = 600u;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA sd = {};
+	sd.pSysMem = s.GetBufferPtr();
+	sd.SysMemPitch = s.GetWidth() * sizeof(Surface::Color);
+	ComPtr<ID3D11Texture2D> pTexture;
+	GFX_THROW_INFO(pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture));
+
+	ComPtr<ID3D11ShaderResourceView> pTextureView;
+	// create the resource view on the texture
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = textureDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = 1;
+	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pTextureView));
+
+
 	// create pixel shader
 	ComPtr<ID3D11PixelShader> pPixelShader;
 	GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", pBlob.GetAddressOf()));
 	GFX_THROW_INFO(pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, pPixelShader.GetAddressOf()));
 	// bind pixel shader
 	GFX_THROW_INFO_ONLY(pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u));
+
+	GFX_THROW_INFO_ONLY(pContext->PSSetShaderResources(0u, 1u, pTextureView.GetAddressOf()));
 
 	// Set primitive topology to triangle list (groups of 3 vertices)
 	GFX_THROW_INFO_ONLY(pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
