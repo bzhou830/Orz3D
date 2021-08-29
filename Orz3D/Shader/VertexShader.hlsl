@@ -3,7 +3,7 @@
 //--------------------------------------------------------------------------------------
 struct VSOut
 {
-	float3 color : Color;
+	float2 tex : TEXCOORD;
 	float4 pos : SV_Position;
 };
 
@@ -12,10 +12,10 @@ cbuffer CBuf
 	matrix transform;
 };
 
-VSOut main(float3 pos : Position, float3 color : Color)
+VSOut main(float3 pos : Position, float2 tex : TEXCOORD)
 {
 	VSOut vso;
-	vso.pos = mul(float4(pos.x, pos.y, pos.z, 1.0f), transform);
-	vso.color = color;
+	vso.pos = mul(float4(pos, 1.0f), transform);
+	vso.tex = tex;
 	return vso;
 }

@@ -189,13 +189,13 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 	const Vertex vertices[] =
 	{
 		{ -1.0f, -1.0f, -1.0f  , 0.0f, 1.0f},
-		{ 1.0f,-1.0f,-1.0f     , 0.0f, 0.0f},
-		{ -1.0f,1.0f,-1.0f     , 1.0f, 0.0f},
-		{ 1.0f,1.0f,-1.0f      , 1.0f, 1.0f},
-		{ -1.0f,-1.0f,1.0f     , 1.0f, 1.0f},
-		{ 1.0f,-1.0f,1.0f      , 0.0f, 1.0f},
-		{ -1.0f,1.0f,1.0f      , 0.0f, 0.0f},
-		{ 1.0f,1.0f,1.0f       , 1.0f, 0.0f},
+		{ 1.0f,-1.0f,-1.0f     , 1.0f, 1.0f},
+		{ -1.0f,1.0f,-1.0f     , 0.0f, 0.0f},
+		{ 1.0f,1.0f,-1.0f      , 1.0f, 0.0f},
+		{ -1.0f,-1.0f,1.0f     , 0.0f, 0.0f},
+		{ 1.0f,-1.0f,1.0f      , 1.0f, 0.0f},
+		{ -1.0f,1.0f,1.0f      , 0.0f, 1.0f},
+		{ 1.0f,1.0f,1.0f       , 1.0f, 1.0f},
 	};
 	
 	D3D11_BUFFER_DESC bd = { 0 };
@@ -249,7 +249,8 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 	const ConstantBuffer cb = {
 		dx::XMMatrixTranspose(
 				dx::XMMatrixRotationX(angle) *
-				dx::XMMatrixTranslation(x, y, 4.0f + y) *
+				dx::XMMatrixTranslation(0, 0, 4.0f) *
+			/*dx::XMMatrixTranslation(0, 0, 4.0f) **/
 				dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 10.0f))
 	};
 	ComPtr<ID3D11Buffer> pConstantBuffer;
@@ -295,7 +296,6 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 
 	//从文件中读取到图像数据，使用图像数据创建texture
 	
-
 	// create texture resource
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 	textureDesc.Width = 800u;
@@ -310,9 +310,14 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	D3D11_SUBRESOURCE_DATA sd = {};
-	sd.pSysMem = s.GetBufferPtr();
-	sd.SysMemPitch = s.GetWidth() * sizeof(Surface::Color);
+	if (!m_cap.read(m_frame_bgr))
+		throw GFX_EXCEPT(hr);
+
+	cv::cvtColor(m_frame_bgr, m_frame_rgba, cv::COLOR_RGB2RGBA);
+	cv::resize(m_frame_rgba, m_frame_rgba, cv::Size(800, 600));
+
+	sd.pSysMem = m_frame_rgba.data;
+	sd.SysMemPitch = 800 * sizeof(DWORD);
 	ComPtr<ID3D11Texture2D> pTexture;
 	GFX_THROW_INFO(pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture));
 
@@ -325,7 +330,6 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 	srvDesc.Texture2D.MipLevels = 1;
 	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pTextureView));
 
-
 	// create pixel shader
 	ComPtr<ID3D11PixelShader> pPixelShader;
 	GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", pBlob.GetAddressOf()));
@@ -334,6 +338,15 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 	GFX_THROW_INFO_ONLY(pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u));
 
 	GFX_THROW_INFO_ONLY(pContext->PSSetShaderResources(0u, 1u, pTextureView.GetAddressOf()));
+
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+	GFX_THROW_INFO(pDevice->CreateSamplerState(&samplerDesc, &pSampler));
+	pContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
 
 	// Set primitive topology to triangle list (groups of 3 vertices)
 	GFX_THROW_INFO_ONLY(pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));

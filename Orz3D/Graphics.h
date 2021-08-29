@@ -72,6 +72,7 @@ private:
 	ComPtr<ID3D11RenderTargetView> pTarget;
 	ComPtr<ID3D11DepthStencilView> pDSV;
 	ComPtr<ID3D11Resource> pBackBuffer;
+	ComPtr<ID3D11SamplerState> pSampler;
 
 	int get_surface(ID3D11Texture2D** ppSurface);
 	cv::VideoCapture   m_cap;
