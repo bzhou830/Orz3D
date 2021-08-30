@@ -13,5 +13,6 @@ private:
 	void doFrame();
 	Window wnd;
 	BzTimer timer;
+	std::vector<std::unique_ptr<class Box>> boxes;
 };
 

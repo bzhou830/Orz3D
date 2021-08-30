@@ -81,6 +81,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>IS_DEBUG=true;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -126,8 +127,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Bindable\Bindable.cpp" />
+    <ClCompile Include="Bindable\IndexBuffer.cpp" />
+    <ClCompile Include="Bindable\InputLayout.cpp" />
+    <ClCompile Include="Bindable\PixelShader.cpp" />
+    <ClCompile Include="Bindable\Topology.cpp" />
+    <ClCompile Include="Bindable\TransformCbuf.cpp" />
+    <ClCompile Include="Bindable\VertexBuffer.cpp" />
+    <ClCompile Include="Bindable\VertexShader.cpp" />
     <ClCompile Include="BzException.cpp" />
     <ClCompile Include="BzTimer.cpp" />
+    <ClCompile Include="Drawable\Box.cpp" />
+    <ClCompile Include="Drawable\Drawable.cpp" />
     <ClCompile Include="DxErr\dxerr.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -146,9 +157,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="Bindable\Bindable.h" />
+    <ClInclude Include="Bindable\BindableBase.h" />
+    <ClInclude Include="Bindable\ConstantBuffers.h" />
+    <ClInclude Include="Bindable\IndexBuffer.h" />
+    <ClInclude Include="Bindable\InputLayout.h" />
+    <ClInclude Include="Bindable\PixelShader.h" />
+    <ClInclude Include="Bindable\Topology.h" />
+    <ClInclude Include="Bindable\TransformCbuf.h" />
+    <ClInclude Include="Bindable\VertexBuffer.h" />
+    <ClInclude Include="Bindable\VertexShader.h" />
     <ClInclude Include="BzException.h" />
     <ClInclude Include="BzTimer.h" />
     <ClInclude Include="BzWin.h" />
+    <ClInclude Include="Drawable\Box.h" />
+    <ClInclude Include="Drawable\Drawable.h" />
     <ClInclude Include="DxErr\dxerr.h" />
     <ClInclude Include="DxgiInfoManager.h" />
     <ClInclude Include="Graphics.h" />

@@ -99,7 +99,13 @@ Graphics::Graphics(HWND hWnd)
 	vp.TopLeftX = 0.0f;
 	vp.TopLeftY = 0.0f;
 	pContext->RSSetViewports(1u, &vp);
+	
+	SetupDearImGui(hWnd);
+	//m_cap.open("d:/repos/cvdx/cvdx/111.mp4");
+}
 
+void Graphics::SetupDearImGui(HWND hWnd) const noexcept
+{
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -112,8 +118,6 @@ Graphics::Graphics(HWND hWnd)
 	// Setup Platform/Renderer backends
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
-
-	m_cap.open("d:/repos/cvdx/cvdx/111.mp4");
 }
 
 
@@ -124,33 +128,10 @@ void Graphics::ClearBuffer(float red, float green, float blue)
 	GFX_THROW_INFO_ONLY(pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u));
 }
 
-
-// get media data on DX surface for further processing
-int Graphics::get_surface(ID3D11Texture2D** ppSurface)
+void Graphics::DrawIndexed(UINT count) noexcept(!IS_DEBUG)
 {
-	HRESULT r;
-	if (!m_cap.read(m_frame_bgr))
-		return EXIT_FAILURE;
-
-	cv::cvtColor(m_frame_bgr, m_frame_rgba, cv::COLOR_BGR2RGBA);
-
-	// process video frame on CPU
-	UINT subResource = ::D3D11CalcSubresource(0, 0, 1);
-	D3D11_MAPPED_SUBRESOURCE mappedTex;
-	r = pContext->Map(*ppSurface, subResource, D3D11_MAP_WRITE_DISCARD, 0, &mappedTex);
-	if (FAILED(r))
-	{
-		throw std::runtime_error("surface mapping failed!");
-	}
-
-	cv::Mat m(600, 800, CV_8UC4, mappedTex.pData, mappedTex.RowPitch);
-	m_frame_rgba.copyTo(m);
-
-	pContext->Unmap(*ppSurface, subResource);
-
-	return EXIT_SUCCESS;
-} 
-
+	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
+}
 
 void Graphics::DrawTestTriangle(float angle, float x, float y)
 {

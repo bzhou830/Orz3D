@@ -4,6 +4,11 @@
 #include "BzException.h"
 #include "DxgiInfoManager.h"
 
+#include <d3dcompiler.h>
+#include <DirectXMath.h>
+#include <memory>
+#include <random>
+
 #include "opencv2/core.hpp"
 #include "opencv2/core/directx.hpp"
 #include "opencv2/core/ocl.hpp"
@@ -17,6 +22,7 @@ using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 class Graphics
 {
+	friend class Bindable;
 public:
 	class Exception : public BzException
 	{
@@ -60,9 +66,20 @@ public:
 	Graphics(const Graphics&) = delete;            //拷贝构造函数
 	Graphics& operator=(const Graphics&) = delete; //赋值构造函数
 	void ClearBuffer(float red, float green, float blue);
+	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
+	void SetProjection(DirectX::FXMMATRIX proj) noexcept
+	{
+		projection = proj;
+	}
+	DirectX::XMMATRIX GetProjection() const noexcept
+	{
+		return projection;
+	}
 	void DrawTestTriangle(float angle, float x, float y);
 	void EndFrame();
 private:
+	void SetupDearImGui(HWND hWnd) const noexcept;
+	DirectX::XMMATRIX projection;
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
@@ -74,7 +91,6 @@ private:
 	ComPtr<ID3D11Resource> pBackBuffer;
 	ComPtr<ID3D11SamplerState> pSampler;
 
-	int get_surface(ID3D11Texture2D** ppSurface);
 	cv::VideoCapture   m_cap;
 	cv::Mat            m_frame_bgr;
 	cv::Mat            m_frame_rgba;

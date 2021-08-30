@@ -1,6 +1,7 @@
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+/*
 struct VSOut
 {
 	float2 tex : TEXCOORD;
@@ -18,4 +19,15 @@ VSOut main(float3 pos : Position, float2 tex : TEXCOORD)
 	vso.pos = mul(float4(pos, 1.0f), transform);
 	vso.tex = tex;
 	return vso;
+}
+*/
+
+cbuffer CBuf
+{
+	matrix transform;
+};
+
+float4 main(float3 pos : Position) : SV_Position
+{
+	return mul(float4(pos, 1.0f), transform);
 }
