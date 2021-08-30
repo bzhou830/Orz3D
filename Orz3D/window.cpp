@@ -53,7 +53,7 @@ Window::Window(int width, int height, const char* name):
 
 	// 传入的是client rect的大小，窗口rect大小是需要调整的
 	if (false == AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE))
-		throw CHWND_LAST_EXCEPT();
+		throw WND_LAST_EXCEPT();
 
 	//create window & get hWnd. CreateWindow中的最后一个参数指定的this, 这个在后续中可以通过获取创建参数获得
     hWnd = CreateWindow(
@@ -64,7 +64,7 @@ Window::Window(int width, int height, const char* name):
 	
 	// 创建窗口失败，抛出异常方便调试
 	if (hWnd == nullptr)
-		throw CHWND_LAST_EXCEPT();
+		throw WND_LAST_EXCEPT();
 	
     // show window
     ShowWindow(hWnd, SW_SHOWDEFAULT);
@@ -82,7 +82,7 @@ void Window::SetTitle(const std::string& title)
 {
 	if (SetWindowText(hWnd, title.c_str()) == 0)
 	{
-		throw CHWND_LAST_EXCEPT();
+		throw WND_LAST_EXCEPT();
 	}
 }
 

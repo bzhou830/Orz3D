@@ -350,7 +350,7 @@ MigrationBackup/
 .ionide/
 
 # shader binary
-*.cso
+/Orz3D/*.cso
 
 # imgui.ini
 /Orz3D/imgui.ini

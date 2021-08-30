@@ -5,6 +5,7 @@
 #include "Mouse.h"
 #include "Graphics.h"
 #include <memory>
+#include "WindowThrowMacros.h"
 
 class Window
 {
@@ -55,6 +56,3 @@ private:
 	std::unique_ptr<Graphics> pGfx;
 };
 
-// error exception helper macro
-#define CHWND_EXCEPT( hr ) Window::Exception( __LINE__,__FILE__,hr )
-#define CHWND_LAST_EXCEPT() Window::Exception( __LINE__,__FILE__,GetLastError() )
