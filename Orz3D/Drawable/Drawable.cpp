@@ -1,6 +1,6 @@
 #include "Drawable.h"
 #include "../GraphicsThrowMacros.h"
-#include "../Bindable/IndexBuffer.h"
+
 #include <cassert>
 #include <typeinfo>
 
@@ -24,4 +24,11 @@ void Drawable::AddIndexBuffer(std::unique_ptr<IndexBuffer> ibuf) noexcept
 	assert("Attempting to add index buffer a second time" && pIndexBuffer == nullptr);
 	pIndexBuffer = ibuf.get();
 	binds.push_back(std::move(ibuf));
+}
+
+void Drawable::AddTexture(std::unique_ptr<Texture> tbuf) noexcept
+{
+	assert("Attempting to add index buffer a second time" && pIndexBuffer == nullptr);
+	pTexBuffer = tbuf.get();
+	binds.push_back(std::move(tbuf));
 }

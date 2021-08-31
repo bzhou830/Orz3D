@@ -3,6 +3,7 @@
 #include <iomanip>
 
 #include "Drawable/Box.h"
+#include "Drawable/TexBox.h"
 #include <memory>
 
 App::App() : wnd(800, 600, "app")
@@ -17,9 +18,13 @@ App::App(int width, int height, const char* name)
 	std::uniform_real_distribution<float> ddist(0.0f, 3.1415f * 2.0f);
 	std::uniform_real_distribution<float> odist(0.0f, 3.1415f * 0.3f);
 	std::uniform_real_distribution<float> rdist(6.0f, 20.0f);
-	for (auto i = 0; i < 20; i++)
+	for (auto i = 0; i < 10; i++)
 	{
 		boxes.push_back(std::make_unique<Box>(wnd.Gfx(), rng, adist, ddist, odist, rdist));
+	}
+	for (auto i = 0; i < 10; i++)
+	{
+		TexBoxes.push_back(std::make_unique<TexBox>(wnd.Gfx(), rng, adist, ddist, odist, rdist));
 	}
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
 }
@@ -49,6 +54,11 @@ void App::doFrame()
 	wnd.Gfx().ClearBuffer(0.07f, 0.0f, 0.12f);
 
 	for (auto& b : boxes)
+	{
+		b->Update(t);
+		b->Draw(wnd.Gfx());
+	}
+	for (auto& b : TexBoxes)
 	{
 		b->Update(t);
 		b->Draw(wnd.Gfx());

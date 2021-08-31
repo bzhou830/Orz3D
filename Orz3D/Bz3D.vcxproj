@@ -131,6 +131,8 @@
     <ClCompile Include="Bindable\IndexBuffer.cpp" />
     <ClCompile Include="Bindable\InputLayout.cpp" />
     <ClCompile Include="Bindable\PixelShader.cpp" />
+    <ClCompile Include="Bindable\Sampler.cpp" />
+    <ClCompile Include="Bindable\Texture.cpp" />
     <ClCompile Include="Bindable\Topology.cpp" />
     <ClCompile Include="Bindable\TransformCbuf.cpp" />
     <ClCompile Include="Bindable\VertexBuffer.cpp" />
@@ -139,6 +141,7 @@
     <ClCompile Include="BzTimer.cpp" />
     <ClCompile Include="Drawable\Box.cpp" />
     <ClCompile Include="Drawable\Drawable.cpp" />
+    <ClCompile Include="Drawable\TexBox.cpp" />
     <ClCompile Include="DxErr\dxerr.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -152,6 +155,7 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="Surface.cpp" />
     <ClCompile Include="window.cpp" />
     <ClCompile Include="WindowsMessageMap.cpp" />
   </ItemGroup>
@@ -163,6 +167,8 @@
     <ClInclude Include="Bindable\IndexBuffer.h" />
     <ClInclude Include="Bindable\InputLayout.h" />
     <ClInclude Include="Bindable\PixelShader.h" />
+    <ClInclude Include="Bindable\Sampler.h" />
+    <ClInclude Include="Bindable\Texture.h" />
     <ClInclude Include="Bindable\Topology.h" />
     <ClInclude Include="Bindable\TransformCbuf.h" />
     <ClInclude Include="Bindable\VertexBuffer.h" />
@@ -172,6 +178,7 @@
     <ClInclude Include="BzWin.h" />
     <ClInclude Include="Drawable\Box.h" />
     <ClInclude Include="Drawable\Drawable.h" />
+    <ClInclude Include="Drawable\TexBox.h" />
     <ClInclude Include="DxErr\dxerr.h" />
     <ClInclude Include="DxgiInfoManager.h" />
     <ClInclude Include="Graphics.h" />
@@ -187,6 +194,7 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Surface.h" />
     <ClInclude Include="window.h" />
     <ClInclude Include="WindowsMessageMap.h" />
     <ClInclude Include="WindowThrowMacros.h" />
@@ -208,10 +216,20 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(ProjectName)\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <FxCompile Include="Shader\PixelShaderTex.hlsl">
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(ProjectName)\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="Shader\VertexShader.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(ProjectName)\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Shader\VertexShaderTex.hlsl">
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(ProjectName)\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

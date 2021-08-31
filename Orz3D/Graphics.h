@@ -3,17 +3,10 @@
 #include <d3d11.h>
 #include "BzException.h"
 #include "DxgiInfoManager.h"
-
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include <memory>
 #include <random>
-
-#include "opencv2/core.hpp"
-#include "opencv2/core/directx.hpp"
-#include "opencv2/core/ocl.hpp"
-#include "opencv2/imgproc.hpp"
-#include "opencv2/videoio.hpp"
 
 // 使用ComPtr方便对Com接口函数的管理
 #include <wrl.h>
@@ -75,7 +68,7 @@ public:
 	{
 		return projection;
 	}
-	void DrawTestTriangle(float angle, float x, float y);
+	//void DrawTestTriangle(float angle, float x, float y);
 	void EndFrame();
 private:
 	void SetupDearImGui(HWND hWnd) const noexcept;
@@ -91,8 +84,8 @@ private:
 	ComPtr<ID3D11Resource> pBackBuffer;
 	ComPtr<ID3D11SamplerState> pSampler;
 
-	cv::VideoCapture   m_cap;
-	cv::Mat            m_frame_bgr;
-	cv::Mat            m_frame_rgba;
+	//cv::VideoCapture   m_cap;
+	//cv::Mat            m_frame_bgr;
+	//cv::Mat            m_frame_rgba;
 };
 

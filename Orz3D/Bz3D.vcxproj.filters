@@ -123,6 +123,18 @@
     <ClCompile Include="Drawable\Box.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="Drawable\TexBox.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="Bindable\Texture.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="Bindable\Sampler.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="Surface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -227,6 +239,18 @@
     <ClInclude Include="Bindable\BindableBase.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
+    <ClInclude Include="Drawable\TexBox.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Bindable\Texture.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="Bindable\Sampler.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="Surface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Bz3D.rc">
@@ -254,6 +278,12 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shader\PixelShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\PixelShaderTex.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\VertexShaderTex.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

@@ -133,192 +133,192 @@ void Graphics::DrawIndexed(UINT count) noexcept(!IS_DEBUG)
 	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
 }
 
-void Graphics::DrawTestTriangle(float angle, float x, float y)
-{
-	HRESULT hr = S_OK;
-	struct Vertex
-	{
-		struct  
-		{
-			float x;
-			float y;
-			float z;
-		} position;
-		struct 
-		{
-			float u;
-			float v;
-		} texCoord;
-	};
-
-	// create vertex buffer (1 2d triangle at center of screen)
-	const Vertex vertices[] =
-	{
-		{ -1.0f, -1.0f, -1.0f  , 0.0f, 1.0f},
-		{ 1.0f,-1.0f,-1.0f     , 1.0f, 1.0f},
-		{ -1.0f,1.0f,-1.0f     , 0.0f, 0.0f},
-		{ 1.0f,1.0f,-1.0f      , 1.0f, 0.0f},
-		{ -1.0f,-1.0f,1.0f     , 0.0f, 0.0f},
-		{ 1.0f,-1.0f,1.0f      , 1.0f, 0.0f},
-		{ -1.0f,1.0f,1.0f      , 0.0f, 1.0f},
-		{ 1.0f,1.0f,1.0f       , 1.0f, 1.0f},
-	};
-	
-	D3D11_BUFFER_DESC bd = { 0 };
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.CPUAccessFlags = 0u;
-	bd.MiscFlags = 0u;
-	bd.ByteWidth = sizeof(vertices);
-	bd.StructureByteStride = sizeof(Vertex);
-
-	D3D11_SUBRESOURCE_DATA sd = { 0 };
-	sd.pSysMem = vertices;
-	
-	ComPtr<ID3D11Buffer> pVertexBuffer;
-	GFX_THROW_INFO(pDevice->CreateBuffer(&bd, &sd, pVertexBuffer.GetAddressOf()));
-
-	// Bind vertex buffer to pipeline
-	const UINT stride = sizeof(Vertex);
-	const UINT offset = 0u;
-	GFX_THROW_INFO_ONLY(pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset));
-
-	// create index buffer
-	const unsigned short indices[] = {
-		0,2,1, 2,3,1,
-		1,3,5, 3,7,5,
-		2,6,3, 3,6,7,
-		4,5,7, 4,7,6,
-		0,4,2, 2,4,6,
-		0,1,4, 1,5,4
-	};
-	ComPtr<ID3D11Buffer> pIndexBuffer;
-	D3D11_BUFFER_DESC ibd = { 0 };
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.Usage = D3D11_USAGE_DEFAULT;
-	ibd.CPUAccessFlags = 0u;
-	ibd.MiscFlags = 0u;
-	ibd.ByteWidth = sizeof(indices);
-	ibd.StructureByteStride = sizeof(unsigned short);
-	D3D11_SUBRESOURCE_DATA isd = { 0 };
-	isd.pSysMem = indices;
-	GFX_THROW_INFO(pDevice->CreateBuffer(&ibd, &isd, pIndexBuffer.GetAddressOf()));
-
-	// bind index buffer
-	pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
-
-	// create constant buffer for transformation matrix
-	struct ConstantBuffer
-	{
-		dx::XMMATRIX transformation;
-	};
-	const ConstantBuffer cb = {
-		dx::XMMatrixTranspose(
-				dx::XMMatrixRotationX(angle) *
-				dx::XMMatrixTranslation(0, 0, 4.0f) *
-			/*dx::XMMatrixTranslation(0, 0, 4.0f) **/
-				dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 10.0f))
-	};
-	ComPtr<ID3D11Buffer> pConstantBuffer;
-	D3D11_BUFFER_DESC cbd = { 0 };
-	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbd.Usage = D3D11_USAGE_DYNAMIC;
-	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	cbd.MiscFlags = 0u;
-	cbd.ByteWidth = sizeof(cb);
-	cbd.StructureByteStride = 0u;
-	D3D11_SUBRESOURCE_DATA csd = { 0 };
-	csd.pSysMem = &cb;
-	GFX_THROW_INFO(pDevice->CreateBuffer(&cbd, &csd, pConstantBuffer.GetAddressOf()));
-
-	// bind constant buffer to vertex shader
-	pContext->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
-
-	// create vertex shader
-	ComPtr<ID3D11VertexShader> pVertexShader;
-	ComPtr<ID3DBlob> pBlob;
-	GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso", pBlob.GetAddressOf()));
-	GFX_THROW_INFO(pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, pVertexShader.GetAddressOf()));
-	// bind vertex shader
-	GFX_THROW_INFO_ONLY(pContext->VSSetShader(pVertexShader.Get(), nullptr, 0u));
-
-	// input (vertex) layout (2d position only)
-	ComPtr<ID3D11InputLayout> pInputLayout;
-	const D3D11_INPUT_ELEMENT_DESC ied[] =
-	{
-		// "Position" 的声明和vs中的输入名称是一一对应的
-		{ "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(Vertex::position), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		//{ "Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(Vertex::position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
-	GFX_THROW_INFO(pDevice->CreateInputLayout(
-		ied, (UINT)std::size(ied),
-		pBlob->GetBufferPointer(),
-		pBlob->GetBufferSize(),
-		pInputLayout.GetAddressOf()));
-
-	// bind vertex layout
-	GFX_THROW_INFO_ONLY(pContext->IASetInputLayout(pInputLayout.Get()));
-
-	//从文件中读取到图像数据，使用图像数据创建texture
-	
-	// create texture resource
-	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = 800u;
-	textureDesc.Height = 600u;
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.SampleDesc.Quality = 0;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	textureDesc.CPUAccessFlags = 0;
-	textureDesc.MiscFlags = 0;
-
-	if (!m_cap.read(m_frame_bgr))
-		throw GFX_EXCEPT(hr);
-
-	cv::cvtColor(m_frame_bgr, m_frame_rgba, cv::COLOR_RGB2RGBA);
-	cv::resize(m_frame_rgba, m_frame_rgba, cv::Size(800, 600));
-
-	sd.pSysMem = m_frame_rgba.data;
-	sd.SysMemPitch = 800 * sizeof(DWORD);
-	ComPtr<ID3D11Texture2D> pTexture;
-	GFX_THROW_INFO(pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture));
-
-	ComPtr<ID3D11ShaderResourceView> pTextureView;
-	// create the resource view on the texture
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = textureDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.MipLevels = 1;
-	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pTextureView));
-
-	// create pixel shader
-	ComPtr<ID3D11PixelShader> pPixelShader;
-	GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", pBlob.GetAddressOf()));
-	GFX_THROW_INFO(pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, pPixelShader.GetAddressOf()));
-	// bind pixel shader
-	GFX_THROW_INFO_ONLY(pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u));
-
-	GFX_THROW_INFO_ONLY(pContext->PSSetShaderResources(0u, 1u, pTextureView.GetAddressOf()));
-
-	D3D11_SAMPLER_DESC samplerDesc = {};
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-
-	GFX_THROW_INFO(pDevice->CreateSamplerState(&samplerDesc, &pSampler));
-	pContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
-
-	// Set primitive topology to triangle list (groups of 3 vertices)
-	GFX_THROW_INFO_ONLY(pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
-
-	GFX_THROW_INFO_ONLY(pContext->DrawIndexed((UINT)std::size(indices), 0u, 0u));
-}
+//void Graphics::DrawTestTriangle(float angle, float x, float y)
+//{
+//	HRESULT hr = S_OK;
+//	struct Vertex
+//	{
+//		struct  
+//		{
+//			float x;
+//			float y;
+//			float z;
+//		} position;
+//		struct 
+//		{
+//			float u;
+//			float v;
+//		} texCoord;
+//	};
+//
+//	// create vertex buffer (1 2d triangle at center of screen)
+//	const Vertex vertices[] =
+//	{
+//		{ -1.0f, -1.0f, -1.0f  , 0.0f, 1.0f},
+//		{ 1.0f,-1.0f,-1.0f     , 1.0f, 1.0f},
+//		{ -1.0f,1.0f,-1.0f     , 0.0f, 0.0f},
+//		{ 1.0f,1.0f,-1.0f      , 1.0f, 0.0f},
+//		{ -1.0f,-1.0f,1.0f     , 0.0f, 0.0f},
+//		{ 1.0f,-1.0f,1.0f      , 1.0f, 0.0f},
+//		{ -1.0f,1.0f,1.0f      , 0.0f, 1.0f},
+//		{ 1.0f,1.0f,1.0f       , 1.0f, 1.0f},
+//	};
+//	
+//	D3D11_BUFFER_DESC bd = { 0 };
+//	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+//	bd.Usage = D3D11_USAGE_DEFAULT;
+//	bd.CPUAccessFlags = 0u;
+//	bd.MiscFlags = 0u;
+//	bd.ByteWidth = sizeof(vertices);
+//	bd.StructureByteStride = sizeof(Vertex);
+//
+//	D3D11_SUBRESOURCE_DATA sd = { 0 };
+//	sd.pSysMem = vertices;
+//	
+//	ComPtr<ID3D11Buffer> pVertexBuffer;
+//	GFX_THROW_INFO(pDevice->CreateBuffer(&bd, &sd, pVertexBuffer.GetAddressOf()));
+//
+//	// Bind vertex buffer to pipeline
+//	const UINT stride = sizeof(Vertex);
+//	const UINT offset = 0u;
+//	GFX_THROW_INFO_ONLY(pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset));
+//
+//	// create index buffer
+//	const unsigned short indices[] = {
+//		0,2,1, 2,3,1,
+//		1,3,5, 3,7,5,
+//		2,6,3, 3,6,7,
+//		4,5,7, 4,7,6,
+//		0,4,2, 2,4,6,
+//		0,1,4, 1,5,4
+//	};
+//	ComPtr<ID3D11Buffer> pIndexBuffer;
+//	D3D11_BUFFER_DESC ibd = { 0 };
+//	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+//	ibd.Usage = D3D11_USAGE_DEFAULT;
+//	ibd.CPUAccessFlags = 0u;
+//	ibd.MiscFlags = 0u;
+//	ibd.ByteWidth = sizeof(indices);
+//	ibd.StructureByteStride = sizeof(unsigned short);
+//	D3D11_SUBRESOURCE_DATA isd = { 0 };
+//	isd.pSysMem = indices;
+//	GFX_THROW_INFO(pDevice->CreateBuffer(&ibd, &isd, pIndexBuffer.GetAddressOf()));
+//
+//	// bind index buffer
+//	pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
+//
+//	// create constant buffer for transformation matrix
+//	struct ConstantBuffer
+//	{
+//		dx::XMMATRIX transformation;
+//	};
+//	const ConstantBuffer cb = {
+//		dx::XMMatrixTranspose(
+//				dx::XMMatrixRotationX(angle) *
+//				dx::XMMatrixTranslation(0, 0, 4.0f) *
+//			/*dx::XMMatrixTranslation(0, 0, 4.0f) **/
+//				dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 10.0f))
+//	};
+//	ComPtr<ID3D11Buffer> pConstantBuffer;
+//	D3D11_BUFFER_DESC cbd = { 0 };
+//	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+//	cbd.Usage = D3D11_USAGE_DYNAMIC;
+//	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+//	cbd.MiscFlags = 0u;
+//	cbd.ByteWidth = sizeof(cb);
+//	cbd.StructureByteStride = 0u;
+//	D3D11_SUBRESOURCE_DATA csd = { 0 };
+//	csd.pSysMem = &cb;
+//	GFX_THROW_INFO(pDevice->CreateBuffer(&cbd, &csd, pConstantBuffer.GetAddressOf()));
+//
+//	// bind constant buffer to vertex shader
+//	pContext->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
+//
+//	// create vertex shader
+//	ComPtr<ID3D11VertexShader> pVertexShader;
+//	ComPtr<ID3DBlob> pBlob;
+//	GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso", pBlob.GetAddressOf()));
+//	GFX_THROW_INFO(pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, pVertexShader.GetAddressOf()));
+//	// bind vertex shader
+//	GFX_THROW_INFO_ONLY(pContext->VSSetShader(pVertexShader.Get(), nullptr, 0u));
+//
+//	// input (vertex) layout (2d position only)
+//	ComPtr<ID3D11InputLayout> pInputLayout;
+//	const D3D11_INPUT_ELEMENT_DESC ied[] =
+//	{
+//		// "Position" 的声明和vs中的输入名称是一一对应的
+//		{ "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+//		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(Vertex::position), D3D11_INPUT_PER_VERTEX_DATA, 0},
+//		//{ "Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(Vertex::position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+//	};
+//	GFX_THROW_INFO(pDevice->CreateInputLayout(
+//		ied, (UINT)std::size(ied),
+//		pBlob->GetBufferPointer(),
+//		pBlob->GetBufferSize(),
+//		pInputLayout.GetAddressOf()));
+//
+//	// bind vertex layout
+//	GFX_THROW_INFO_ONLY(pContext->IASetInputLayout(pInputLayout.Get()));
+//
+//	//从文件中读取到图像数据，使用图像数据创建texture
+//	
+//	// create texture resource
+//	D3D11_TEXTURE2D_DESC textureDesc = {};
+//	textureDesc.Width = 800u;
+//	textureDesc.Height = 600u;
+//	textureDesc.MipLevels = 1;
+//	textureDesc.ArraySize = 1;
+//	textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+//	textureDesc.SampleDesc.Count = 1;
+//	textureDesc.SampleDesc.Quality = 0;
+//	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+//	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+//	textureDesc.CPUAccessFlags = 0;
+//	textureDesc.MiscFlags = 0;
+//
+//	if (!m_cap.read(m_frame_bgr))
+//		throw GFX_EXCEPT(hr);
+//
+//	cv::cvtColor(m_frame_bgr, m_frame_rgba, cv::COLOR_RGB2RGBA);
+//	cv::resize(m_frame_rgba, m_frame_rgba, cv::Size(800, 600));
+//
+//	sd.pSysMem = m_frame_rgba.data;
+//	sd.SysMemPitch = 800 * sizeof(DWORD);
+//	ComPtr<ID3D11Texture2D> pTexture;
+//	GFX_THROW_INFO(pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture));
+//
+//	ComPtr<ID3D11ShaderResourceView> pTextureView;
+//	// create the resource view on the texture
+//	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+//	srvDesc.Format = textureDesc.Format;
+//	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+//	srvDesc.Texture2D.MostDetailedMip = 0;
+//	srvDesc.Texture2D.MipLevels = 1;
+//	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pTextureView));
+//
+//	// create pixel shader
+//	ComPtr<ID3D11PixelShader> pPixelShader;
+//	GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", pBlob.GetAddressOf()));
+//	GFX_THROW_INFO(pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, pPixelShader.GetAddressOf()));
+//	// bind pixel shader
+//	GFX_THROW_INFO_ONLY(pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u));
+//
+//	GFX_THROW_INFO_ONLY(pContext->PSSetShaderResources(0u, 1u, pTextureView.GetAddressOf()));
+//
+//	D3D11_SAMPLER_DESC samplerDesc = {};
+//	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+//	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+//	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+//	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+//
+//	GFX_THROW_INFO(pDevice->CreateSamplerState(&samplerDesc, &pSampler));
+//	pContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
+//
+//	// Set primitive topology to triangle list (groups of 3 vertices)
+//	GFX_THROW_INFO_ONLY(pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+//
+//	GFX_THROW_INFO_ONLY(pContext->DrawIndexed((UINT)std::size(indices), 0u, 0u));
+//}
 
 void Graphics::EndFrame()
 {
