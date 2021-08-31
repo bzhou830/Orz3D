@@ -14,10 +14,15 @@ public:
     static Mat m_frame_bgr;
     static Surface FromCV(std::string str)
     {
-        m_cap.open(str);
+        if (m_cap.isOpened() == false)
+            m_cap.open(str);
+
+        //设置视频的获取的位置
+        m_cap.set(CAP_PROP_POS_MSEC, rand() % 20 * 1000.f);
+
         if (!m_cap.read(m_frame_bgr))
             assert(0);
-
+        
         cv::cvtColor(m_frame_bgr, m_frame_bgr, cv::COLOR_RGB2RGBA);
         cv::resize(m_frame_bgr, m_frame_bgr, cv::Size(800, 600));
 		return Surface(m_frame_bgr);

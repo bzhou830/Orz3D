@@ -94,6 +94,7 @@ void TexBox::Update(float dt) noexcept
 	chi += dchi * dt;
 }
 
+
 DirectX::XMMATRIX TexBox::GetTransformXM() const noexcept
 {
 	return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
