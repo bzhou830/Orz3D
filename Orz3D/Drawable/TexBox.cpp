@@ -58,7 +58,8 @@ TexBox::TexBox(Graphics& gfx,
 
 	AddBind(std::make_unique<Sampler>(gfx));
 
-	Surface surface = Surface::FromCV("D:/Docs/4k_H264_14Mbps.mp4");
+	std::shared_ptr<Surface> surface = std::make_shared<Surface>("D:/Docs/4k_H264_14Mbps.mp4");
+		
 	AddTexture(std::make_unique<Texture>(gfx, surface));
 	
 	const std::vector<unsigned short> indices =

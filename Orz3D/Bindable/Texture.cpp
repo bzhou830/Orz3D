@@ -3,8 +3,7 @@
 
 namespace wrl = Microsoft::WRL;
 
-Texture::Texture(Graphics& gfx, Surface& s) 
-	: surface(s)
+Texture::Texture(Graphics& gfx, std::shared_ptr<class Surface> s)
 {
 	INFOMAN(gfx);
 
@@ -22,8 +21,8 @@ Texture::Texture(Graphics& gfx, Surface& s)
 	textureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	textureDesc.MiscFlags = 0;
 	D3D11_SUBRESOURCE_DATA sd = {};
-	sd.pSysMem = s.GetBufferPtr();
-	sd.SysMemPitch = s.GetWidth() * sizeof(DWORD);
+	sd.pSysMem = s->GetBufferPtr();
+	sd.SysMemPitch = s->GetWidth() * sizeof(DWORD);
 	
 	GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(&textureDesc, &sd, &pTexture));
 
@@ -34,11 +33,13 @@ Texture::Texture(Graphics& gfx, Surface& s)
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = 1;
 	GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pTextureView));
+
+	surface = s;
 }
 
 void Texture::Bind(Graphics& gfx) noexcept
 {
-	//Update(gfx);
+	Update(gfx);
 	GetContext(gfx)->PSSetShaderResources(0u, 1u, pTextureView.GetAddressOf());
 }
 
@@ -49,8 +50,8 @@ void Texture::Update(Graphics& gfx) noexcept
 	D3D11_MAPPED_SUBRESOURCE mappedTex;
 	GetContext(gfx)->Map(pTexture.Get(), subResource, D3D11_MAP_WRITE_DISCARD, 0, &mappedTex);
 
-	this->surface.Update();
-	memcpy(mappedTex.pData, surface.GetBufferPtr(), surface.GetHeight() * surface.GetWidth() * sizeof(DWORD));
+	surface->Update();
+	memcpy(mappedTex.pData, surface->GetBufferPtr(), surface->GetHeight() * surface->GetWidth() * sizeof(DWORD));
 
 	GetContext(gfx)->Unmap(pTexture.Get(), subResource);
 }

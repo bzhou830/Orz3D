@@ -5,11 +5,11 @@
 class Texture : public Bindable
 {
 public:
-	Texture(Graphics& gfx, class Surface& s);
+	Texture(Graphics& gfx, std::shared_ptr<class Surface> s);
 	void Bind(Graphics& gfx) noexcept override;
 	void Update(Graphics& gfx) noexcept;
 protected:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTextureView;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture;
-	Surface& surface;
+	std::shared_ptr<class Surface> surface;
 };

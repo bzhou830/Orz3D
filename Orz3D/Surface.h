@@ -10,21 +10,37 @@ using namespace cv;
 class Surface
 {
 public:
-    static VideoCapture m_cap;
-    static Mat m_frame_bgr;
-    static Surface FromCV(std::string str)
+  //  static VideoCapture m_cap;
+  //  static Mat m_frame_bgr;
+  //  static Surface FromCV(std::string str)
+  //  {
+  //      if (m_cap.isOpened() == false)
+  //          m_cap.open(str);
+
+  //      //设置视频的获取的位置
+  //      m_cap.set(CAP_PROP_POS_MSEC, static_cast<double>(rand() % 20) * 1000.f);
+  //      if (!m_cap.read(m_frame_bgr))
+  //          assert(0);
+  //      cv::cvtColor(m_frame_bgr, m_frame_bgr, cv::COLOR_RGB2RGBA);
+  //      cv::resize(m_frame_bgr, m_frame_bgr, cv::Size(800, 600));
+
+		//return Surface(m_frame_bgr);
+  //  }
+    Surface(std::string str)
     {
         if (m_cap.isOpened() == false)
             m_cap.open(str);
 
         //设置视频的获取的位置
         m_cap.set(CAP_PROP_POS_MSEC, static_cast<double>(rand() % 20) * 1000.f);
-        if (!m_cap.read(m_frame_bgr))
+        if (!m_cap.read(m_frame))
             assert(0);
-        cv::cvtColor(m_frame_bgr, m_frame_bgr, cv::COLOR_RGB2RGBA);
-        cv::resize(m_frame_bgr, m_frame_bgr, cv::Size(800, 600));
-
-		return Surface(m_frame_bgr);
+        cv::cvtColor(m_frame, m_frame, cv::COLOR_RGB2RGBA);
+        cv::resize(m_frame, m_frame, cv::Size(800, 600));
+    }
+    ~Surface()
+    {
+        ;
     }
 
     void Update()
@@ -34,29 +50,25 @@ public:
             assert(0);
         cv::cvtColor(tmp, tmp, cv::COLOR_RGB2RGBA);
         cv::resize(tmp, tmp, cv::Size(800, 600));
-        //src = tmp.clone();
-    }
-
-    Surface(cv::Mat s)
-    {
-        src = s.clone();
+        m_frame = tmp.clone();
     }
 
     const uchar* GetBufferPtr() const noexcept
     {
-        return src.data;
+        return m_frame.data;
     }
 
     unsigned int GetWidth() const noexcept
     {
-        return src.cols;
+        return m_frame.cols;
     }
     unsigned int GetHeight() const noexcept
     {
-        return src.rows;
+        return m_frame.rows;
     }
 private:
-    cv::Mat src;
+    cv::VideoCapture m_cap;
+    cv::Mat          m_frame;
 };
 
 
