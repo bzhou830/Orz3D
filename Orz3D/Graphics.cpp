@@ -101,7 +101,6 @@ Graphics::Graphics(HWND hWnd)
 	pContext->RSSetViewports(1u, &vp);
 	
 	SetupDearImGui(hWnd);
-	//m_cap.open("d:/repos/cvdx/cvdx/111.mp4");
 }
 
 void Graphics::SetupDearImGui(HWND hWnd) const noexcept
