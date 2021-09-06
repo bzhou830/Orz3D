@@ -60,7 +60,7 @@ std::mutex g_mutex;
 void Texture::Bind(Graphics& gfx) noexcept
 {
 	std::unique_lock<std::mutex> locker(g_mutex);
-	Update(gfx);
+	//Update(gfx);
 	//std::thread t = Update();
 	GetContext(gfx)->PSSetShaderResources(0u, 1u, pTextureView1.GetAddressOf());
 }
