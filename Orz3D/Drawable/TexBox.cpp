@@ -58,7 +58,7 @@ TexBox::TexBox(Graphics& gfx,
 
 	AddBind(std::make_unique<Sampler>(gfx));
 
-	std::shared_ptr<Surface> surface = std::make_shared<Surface>("D:/Docs/4k_H264_14Mbps.mp4");
+	std::shared_ptr<Surface> surface = std::make_shared<Surface>("D:/111.mp4");
 		
 	AddTexture(std::make_unique<Texture>(gfx, surface));
 	
