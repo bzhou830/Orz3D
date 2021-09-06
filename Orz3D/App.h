@@ -13,6 +13,7 @@ private:
 	void doFrame();
 	Window wnd;
 	BzTimer timer;
+	float speed_factor = 1.0f;
 	std::vector<std::unique_ptr<class Box>> boxes;
 	std::vector<std::unique_ptr<class TexBox>> TexBoxes;
 };

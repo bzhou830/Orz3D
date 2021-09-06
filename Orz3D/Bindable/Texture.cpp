@@ -1,5 +1,7 @@
 #include "Texture.h"
 #include "../GraphicsThrowMacros.h"
+#include <thread>
+#include <mutex>
 
 namespace wrl = Microsoft::WRL;
 
@@ -25,6 +27,7 @@ Texture::Texture(Graphics& gfx, std::shared_ptr<class Surface> s)
 	sd.SysMemPitch = s->GetWidth() * sizeof(DWORD);
 	
 	GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(&textureDesc, &sd, &pTexture));
+	GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(&textureDesc, &sd, &pTexture1));
 
 	// create the resource view on the texture
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -33,14 +36,33 @@ Texture::Texture(Graphics& gfx, std::shared_ptr<class Surface> s)
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = 1;
 	GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pTextureView));
+	GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(pTexture1.Get(), &srvDesc, &pTextureView1));
 
 	surface = s;
+
+	/*auto func = [](Graphics& gfx, pTexture)
+	{
+		UINT subResource = ::D3D11CalcSubresource(0, 0, 1);
+		D3D11_MAPPED_SUBRESOURCE mappedTex;
+		GetContext(gfx)->Map(pTexture.Get(), subResource, D3D11_MAP_WRITE_DISCARD, 0, &mappedTex);
+
+		surface->Update();
+		memcpy(mappedTex.pData, surface->GetBufferPtr(), surface->GetHeight() * surface->GetWidth() * sizeof(DWORD));
+
+		GetContext(gfx)->Unmap(pTexture.Get(), subResource);
+	};*/
+
+	//std::thread t1(func);
 }
+
+std::mutex g_mutex;
 
 void Texture::Bind(Graphics& gfx) noexcept
 {
+	std::unique_lock<std::mutex> locker(g_mutex);
 	Update(gfx);
-	GetContext(gfx)->PSSetShaderResources(0u, 1u, pTextureView.GetAddressOf());
+	//std::thread t = Update();
+	GetContext(gfx)->PSSetShaderResources(0u, 1u, pTextureView1.GetAddressOf());
 }
 
 

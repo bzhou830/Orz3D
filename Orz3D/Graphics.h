@@ -59,6 +59,20 @@ public:
 	Graphics(const Graphics&) = delete;            //拷贝构造函数
 	Graphics& operator=(const Graphics&) = delete; //赋值构造函数
 	void ClearBuffer(float red, float green, float blue);
+	void BeginFrame(float red, float green, float blue) noexcept
+	{
+		// imgui begin frame
+		if (imguiEnabled)
+		{
+			ImGui_ImplDX11_NewFrame();
+			ImGui_ImplWin32_NewFrame();
+			ImGui::NewFrame();
+		}
+
+		const float color[] = { red,green,blue,1.0f };
+		pContext->ClearRenderTargetView(pTarget.Get(), color);
+		pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+	}
 	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
 	void SetProjection(DirectX::FXMMATRIX proj) noexcept
 	{
@@ -72,6 +86,7 @@ public:
 	void EndFrame();
 private:
 	void SetupDearImGui(HWND hWnd) const noexcept;
+	bool imguiEnabled = true;
 	DirectX::XMMATRIX projection;
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;

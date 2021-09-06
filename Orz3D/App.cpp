@@ -36,13 +36,10 @@ App::~App()
 
 void App::doFrame()
 {
-	const float t = timer.Mark();
-	// Start the Dear ImGui frame
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-	static bool show_demo_window = true;
-	ImGui::ShowDemoWindow(&show_demo_window);
+	const float t = timer.Mark() * speed_factor;
+	wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
+	//static bool show_demo_window = true;
+	//ImGui::ShowDemoWindow(&show_demo_window);
 
 	/*std::pair<int, int> pos = wnd.mouse.GetPos();
 	std::ostringstream oss;*/
@@ -50,8 +47,6 @@ void App::doFrame()
 	//oss << "Time elapsed: " << std::setprecision(3) << std::fixed << t << "s";
 	//oss << "Pos x: " << pos.first << " y: " << pos.second << std::endl;
 	//wnd.SetTitle(oss.str());
-	
-	wnd.Gfx().ClearBuffer(0.07f, 0.0f, 0.12f);
 
 	for (auto& b : boxes)
 	{
@@ -68,8 +63,18 @@ void App::doFrame()
 	// 画两个cube的时候可以观察是否存在远处的物体画出来了，但是近处的物体没有画出来的情况
 	//wnd.Gfx().DrawTestTriangle(t, 0.1f, 0.1f);
 
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	
+
+	// imgui window to control simulation speed
+	if (ImGui::Begin("Simulation Speed"))
+	{
+		static char buffer[1024];
+		ImGui::SliderFloat("Speed Factor", &speed_factor, 0.0f, 4.0f);
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::InputText("Butts", buffer, sizeof(buffer));
+	}
+	ImGui::End();
+
 	wnd.Gfx().EndFrame();
 }
 

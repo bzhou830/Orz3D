@@ -322,6 +322,13 @@ void Graphics::DrawIndexed(UINT count) noexcept(!IS_DEBUG)
 
 void Graphics::EndFrame()
 {
+	// imgui frame end
+	if (imguiEnabled)
+	{
+		ImGui::Render();
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	}
+
 	HRESULT hr;
 #ifndef NDEBUG
 	infoManager.Set();
