@@ -22,7 +22,7 @@ App::App(int width, int height, const char* name)
 	{
 		boxes.push_back(std::make_unique<Box>(wnd.Gfx(), rng, adist, ddist, odist, rdist));
 	}
-	for (auto i = 0; i < 0; i++)
+	for (auto i = 0; i < 1; i++)
 	{
 		TexBoxes.push_back(std::make_unique<TexBox>(wnd.Gfx(), rng, adist, ddist, odist, rdist));
 	}
