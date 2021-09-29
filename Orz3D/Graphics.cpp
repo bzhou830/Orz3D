@@ -3,8 +3,9 @@
 #include <sstream>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
-
 #include "GraphicsThrowMacros.h"
+
+
 
 namespace dx = DirectX;
 
@@ -13,6 +14,19 @@ namespace dx = DirectX;
 
 Graphics::Graphics(HWND hWnd)
 {
+	HRESULT hr; // GFX_THROW_FAILED 中需要用它来检查函数调用的返回值
+	if (HMODULE mod = LoadLibraryA("renderdoc.dll"))
+	{
+		pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)GetProcAddress(mod, "RENDERDOC_GetAPI");
+		int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_1_2, (void**)&rdoc_api);
+		rdoc_api->SetCaptureFilePathTemplate("/Capture");
+		assert(ret == 1);
+	}
+	else
+	{
+		assert(0);
+	}
+
 	DXGI_SWAP_CHAIN_DESC sd = {};
 	sd.BufferDesc.Width = 0; // 当宽高设置为0的时候back buffer的宽高将设置为和窗口一致
 	sd.BufferDesc.Height = 0;
@@ -34,8 +48,6 @@ Graphics::Graphics(HWND hWnd)
 #ifndef NDEBUG
 	swapCreateFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
-
-	HRESULT hr; // GFX_THROW_FAILED 中需要用它来检查函数调用的返回值
 
 	// 创建 device, front/back buffers, 以及 swap chain 和 rendering context
 	GFX_THROW_INFO(D3D11CreateDeviceAndSwapChain(nullptr,

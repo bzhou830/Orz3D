@@ -3,6 +3,7 @@
 #include "resource.h"
 #include <sstream>
 
+
 //窗口类相关代码
 Window::WindowClass Window::WindowClass::wndClass;
 
@@ -140,9 +141,9 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_CHAR:
 	{   
 		kbd.OnChar(static_cast<unsigned char>(wParam));
-		//static std::string str;
-		//str += static_cast<char>(wParam);
-		//SetWindowText(hWnd, str.c_str());
+		pGfx->rdoc_api->TriggerCapture();
+		if (!pGfx->rdoc_api->IsTargetControlConnected())
+			pGfx->rdoc_api->LaunchReplayUI(1, nullptr);
 		break;
 	}
 	/*********** END KEYBOARD MESSAGES ***********/

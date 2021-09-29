@@ -7,7 +7,7 @@
 #include <DirectXMath.h>
 #include <memory>
 #include <random>
-
+#include "renderdoc_app.h"
 // 使用ComPtr方便对Com接口函数的管理
 #include <wrl.h>
 template <class T>
@@ -84,6 +84,7 @@ public:
 	}
 	//void DrawTestTriangle(float angle, float x, float y);
 	void EndFrame();
+	RENDERDOC_API_1_1_2* rdoc_api;
 private:
 	void SetupDearImGui(HWND hWnd) const noexcept;
 	bool imguiEnabled = true;
@@ -99,6 +100,7 @@ private:
 	ComPtr<ID3D11Resource> pBackBuffer;
 	ComPtr<ID3D11SamplerState> pSampler;
 
+	
 	//cv::VideoCapture   m_cap;
 	//cv::Mat            m_frame_bgr;
 	//cv::Mat            m_frame_rgba;

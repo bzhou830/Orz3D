@@ -193,6 +193,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="renderdoc_app.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="window.h" />
