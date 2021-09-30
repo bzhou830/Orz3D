@@ -11,8 +11,8 @@ Texture::Texture(Graphics& gfx, std::shared_ptr<class Surface> s)
 
 	// create texture resource
 	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = 800;
-	textureDesc.Height = 600;
+	textureDesc.Width = s->GetWidth();
+	textureDesc.Height = s->GetHeight();
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;

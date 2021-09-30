@@ -8,10 +8,15 @@
 
 using namespace cv;
 
+enum SurfaceType {
+    IMAGE = 0,
+    VIDEO = 1,
+};
+
 class Surface
 {
 public:
-    Surface(std::string str)
+    Surface(std::string str, uint32_t width, uint32_t height)
     {
         std::string::size_type pos = str.rfind('.');
         std::string ext = str.substr(pos == std::string::npos ? str.length() : pos + 1);
@@ -25,13 +30,15 @@ public:
             if (!m_cap.read(m_frame))
                 assert(0);
             cv::cvtColor(m_frame, m_frame, cv::COLOR_RGB2RGBA);
-            cv::resize(m_frame, m_frame, cv::Size(800, 600));
+            cv::resize(m_frame, m_frame, cv::Size(width, height));
+            st = VIDEO;
         }
         else if (ext == "png")
         {
             m_frame = cv::imread(str);
             cv::cvtColor(m_frame, m_frame, cv::COLOR_RGB2RGBA);
-            cv::resize(m_frame, m_frame, cv::Size(800, 600));
+            cv::resize(m_frame, m_frame, cv::Size(width, height));
+            st = IMAGE;
         }
     }
     ~Surface()
@@ -41,12 +48,15 @@ public:
 
     void Update()
     {
-        cv::Mat tmp;
-        if (!m_cap.read(tmp))
-            assert(0);
-        cv::cvtColor(tmp, tmp, cv::COLOR_RGB2RGBA);
-        cv::resize(tmp, tmp, cv::Size(800, 600));
-        m_frame = tmp.clone();
+        if (st == VIDEO)
+        {
+            cv::Mat tmp;
+            if (!m_cap.read(tmp))
+                assert(0);
+            cv::cvtColor(tmp, tmp, cv::COLOR_RGB2RGBA);
+            cv::resize(tmp, tmp, cv::Size(800, 600));
+            m_frame = tmp.clone();
+        }
     }
 
     const uchar* GetBufferPtr() const noexcept
@@ -65,6 +75,7 @@ public:
 private:
     cv::VideoCapture m_cap;
     cv::Mat          m_frame;
+    SurfaceType      st;
 };
 
 

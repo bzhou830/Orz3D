@@ -18,11 +18,11 @@ App::App(int width, int height, const char* name)
 	std::uniform_real_distribution<float> ddist(0.0f, 3.1415f * 2.0f);
 	std::uniform_real_distribution<float> odist(0.0f, 3.1415f * 0.3f);
 	std::uniform_real_distribution<float> rdist(6.0f, 20.0f);
-	for (auto i = 0; i < 50; i++)
+	for (auto i = 0; i < 5; i++)
 	{
 		boxes.push_back(std::make_unique<Box>(wnd.Gfx(), rng, adist, ddist, odist, rdist));
 	}
-	for (auto i = 0; i < 0; i++)
+	for (auto i = 0; i < 5; i++)
 	{
 		TexBoxes.push_back(std::make_unique<TexBox>(wnd.Gfx(), rng, adist, ddist, odist, rdist));
 	}
