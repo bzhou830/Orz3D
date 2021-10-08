@@ -22,10 +22,10 @@ App::App(int width, int height, const char* name)
 	{
 		boxes.push_back(std::make_unique<Box>(wnd.Gfx(), rng, adist, ddist, odist, rdist));
 	}
-	for (auto i = 0; i < 5; i++)
+	/*for (auto i = 0; i < 5; i++)
 	{
 		TexBoxes.push_back(std::make_unique<TexBox>(wnd.Gfx(), rng, adist, ddist, odist, rdist));
-	}
+	}*/
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
 }
 

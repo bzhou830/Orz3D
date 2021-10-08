@@ -178,6 +178,7 @@
     <ClInclude Include="BzWin.h" />
     <ClInclude Include="Drawable\Box.h" />
     <ClInclude Include="Drawable\Drawable.h" />
+    <ClInclude Include="Drawable\DrawableBase.h" />
     <ClInclude Include="Drawable\TexBox.h" />
     <ClInclude Include="DxErr\dxerr.h" />
     <ClInclude Include="DxgiInfoManager.h" />

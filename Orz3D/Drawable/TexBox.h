@@ -1,7 +1,7 @@
 #pragma once
-#include "Drawable.h"
+#include "DrawableBase.h"
 
-class TexBox : public Drawable
+class TexBox : public DrawableBase<TexBox>
 {
 public:
 	TexBox(Graphics& gfx, std::mt19937& rng,

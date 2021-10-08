@@ -254,6 +254,9 @@
     <ClInclude Include="renderdoc_app.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Drawable\DrawableBase.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Bz3D.rc">
