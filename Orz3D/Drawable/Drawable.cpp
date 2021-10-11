@@ -1,6 +1,5 @@
 #include "Drawable.h"
 #include "../GraphicsThrowMacros.h"
-
 #include <cassert>
 #include <typeinfo>
 

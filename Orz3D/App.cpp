@@ -1,7 +1,6 @@
 #include "App.h"
 #include <sstream>
 #include <iomanip>
-
 #include "Drawable/Box.h"
 #include "Drawable/TexBox.h"
 #include <memory>
