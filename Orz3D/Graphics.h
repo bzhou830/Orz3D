@@ -13,6 +13,8 @@
 template <class T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+#define ENABLE_RENDERDOC 0
+
 class Graphics
 {
 	friend class Bindable;
@@ -82,7 +84,6 @@ public:
 	{
 		return projection;
 	}
-	//void DrawTestTriangle(float angle, float x, float y);
 	void EndFrame();
 	RENDERDOC_API_1_1_2* rdoc_api;
 private:
@@ -99,10 +100,5 @@ private:
 	ComPtr<ID3D11DepthStencilView> pDSV;
 	ComPtr<ID3D11Resource> pBackBuffer;
 	ComPtr<ID3D11SamplerState> pSampler;
-
-	
-	//cv::VideoCapture   m_cap;
-	//cv::Mat            m_frame_bgr;
-	//cv::Mat            m_frame_rgba;
 };
 

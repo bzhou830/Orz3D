@@ -141,9 +141,11 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_CHAR:
 	{   
 		kbd.OnChar(static_cast<unsigned char>(wParam));
+#if ENABLE_RENDERDOC
 		pGfx->rdoc_api->TriggerCapture();
 		if (!pGfx->rdoc_api->IsTargetControlConnected())
 			pGfx->rdoc_api->LaunchReplayUI(1, nullptr);
+#endif
 		break;
 	}
 	/*********** END KEYBOARD MESSAGES ***********/

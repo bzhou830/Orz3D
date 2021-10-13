@@ -5,8 +5,6 @@
 #include <DirectXMath.h>
 #include "GraphicsThrowMacros.h"
 
-
-
 namespace dx = DirectX;
 
 #pragma comment(lib, "d3d11.lib")
@@ -15,6 +13,7 @@ namespace dx = DirectX;
 Graphics::Graphics(HWND hWnd)
 {
 	HRESULT hr; // GFX_THROW_FAILED 中需要用它来检查函数调用的返回值
+#if ENABLE_RENDERDOC
 	if (HMODULE mod = LoadLibraryA("renderdoc.dll"))
 	{
 		pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)GetProcAddress(mod, "RENDERDOC_GetAPI");
@@ -26,6 +25,7 @@ Graphics::Graphics(HWND hWnd)
 	{
 		assert(0);
 	}
+#endif
 
 	DXGI_SWAP_CHAIN_DESC sd = {};
 	sd.BufferDesc.Width = 0; // 当宽高设置为0的时候back buffer的宽高将设置为和窗口一致
