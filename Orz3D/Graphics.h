@@ -13,6 +13,8 @@
 template <class T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+namespace dx = DirectX;
+
 #define ENABLE_RENDERDOC 0
 
 class Graphics
@@ -76,20 +78,31 @@ public:
 		pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 	}
 	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
-	void SetProjection(DirectX::FXMMATRIX proj) noexcept
+	void SetProjection(dx::FXMMATRIX proj) noexcept
 	{
 		projection = proj;
 	}
-	DirectX::XMMATRIX GetProjection() const noexcept
+	dx::XMMATRIX GetProjection() const noexcept
 	{
 		return projection;
 	}
+	void SetCamera(dx::FXMMATRIX cam) noexcept
+	{
+		camera = cam;
+	}
+	dx::XMMATRIX GetCamera() const noexcept
+	{
+		return camera;
+	}
 	void EndFrame();
+#if ENABLE_RENDERDOC
 	RENDERDOC_API_1_1_2* rdoc_api;
+#endif
 private:
 	void SetupDearImGui(HWND hWnd) const noexcept;
 	bool imguiEnabled = true;
-	DirectX::XMMATRIX projection;
+	dx::XMMATRIX projection;
+	dx::XMMATRIX camera;
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
