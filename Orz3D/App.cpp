@@ -26,7 +26,6 @@ App::App(int width, int height, const char* name)
 		TexBoxes.push_back(std::make_unique<TexBox>(wnd.Gfx(), rng, adist, ddist, odist, rdist));
 	}
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
-	wnd.Gfx().SetCamera(dx::XMMatrixTranslation(0.0f, 0.0f, 20.0f));
 }
 
 
@@ -38,7 +37,7 @@ void App::doFrame()
 {
 	const float t = timer.Mark() * speed_factor;
 	wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
-
+	wnd.Gfx().SetCamera(cam.GetMatrix());
 	for (auto& b : boxes)
 	{
 		b->Update(t);
@@ -59,6 +58,7 @@ void App::doFrame()
 		ImGui::InputText("Inputs", buffer, sizeof(buffer));
 	}
 	ImGui::End();
+	cam.SpawnControlWindow();
 
 	wnd.Gfx().EndFrame();
 }

@@ -139,6 +139,7 @@
     <ClCompile Include="Bindable\VertexShader.cpp" />
     <ClCompile Include="BzException.cpp" />
     <ClCompile Include="BzTimer.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Drawable\Box.cpp" />
     <ClCompile Include="Drawable\Drawable.cpp" />
     <ClCompile Include="Drawable\TexBox.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="BzMath.h" />
     <ClInclude Include="BzTimer.h" />
     <ClInclude Include="BzWin.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Drawable\Box.h" />
     <ClInclude Include="Drawable\Cone.h" />
     <ClInclude Include="Drawable\Cube.h" />
