@@ -1,11 +1,10 @@
 #pragma once
-#pragma once
 #include "Graphics.h"
 
 class Camera
 {
 public:
-	DirectX::XMMATRIX GetMatrix() const noexcept;
+	dx::XMMATRIX GetMatrix() const noexcept;
 	void SpawnControlWindow() noexcept;
 	void Reset() noexcept;
 private:

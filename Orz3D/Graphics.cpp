@@ -136,6 +136,41 @@ void Graphics::SetupDearImGui(HWND hWnd) const noexcept
 }
 
 
+void Graphics::BeginFrame(float red, float green, float blue) noexcept
+{
+	// imgui begin frame
+	if (imguiEnabled)
+	{
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+	}
+
+	const float color[] = { red,green,blue,1.0f };
+	pContext->ClearRenderTargetView(pTarget.Get(), color);
+	pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+}
+
+void Graphics::SetProjection(dx::FXMMATRIX proj) noexcept
+{
+	projection = proj;
+}
+
+dx::XMMATRIX Graphics::GetProjection() const noexcept
+{
+	return projection;
+}
+
+void Graphics::SetCamera(dx::FXMMATRIX cam) noexcept
+{
+	camera = cam;
+}
+
+dx::XMMATRIX Graphics::GetCamera() const noexcept
+{
+	return camera;
+}
+
 void Graphics::ClearBuffer(float red, float green, float blue)
 {
 	const float color[] = { red, green, blue, 1.0f };

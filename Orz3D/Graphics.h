@@ -63,38 +63,15 @@ public:
 	Graphics(const Graphics&) = delete;            //拷贝构造函数
 	Graphics& operator=(const Graphics&) = delete; //赋值构造函数
 	void ClearBuffer(float red, float green, float blue);
-	void BeginFrame(float red, float green, float blue) noexcept
-	{
-		// imgui begin frame
-		if (imguiEnabled)
-		{
-			ImGui_ImplDX11_NewFrame();
-			ImGui_ImplWin32_NewFrame();
-			ImGui::NewFrame();
-		}
-
-		const float color[] = { red,green,blue,1.0f };
-		pContext->ClearRenderTargetView(pTarget.Get(), color);
-		pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
-	}
-	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
-	void SetProjection(dx::FXMMATRIX proj) noexcept
-	{
-		projection = proj;
-	}
-	dx::XMMATRIX GetProjection() const noexcept
-	{
-		return projection;
-	}
-	void SetCamera(dx::FXMMATRIX cam) noexcept
-	{
-		camera = cam;
-	}
-	dx::XMMATRIX GetCamera() const noexcept
-	{
-		return camera;
-	}
+	void BeginFrame(float red, float green, float blue) noexcept;
 	void EndFrame();
+	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
+	
+	void SetProjection(dx::FXMMATRIX proj) noexcept;
+	dx::XMMATRIX GetProjection() const noexcept;
+	void SetCamera(dx::FXMMATRIX cam) noexcept;
+	dx::XMMATRIX GetCamera() const noexcept;
+	
 #if ENABLE_RENDERDOC
 	RENDERDOC_API_1_1_2* rdoc_api;
 #endif

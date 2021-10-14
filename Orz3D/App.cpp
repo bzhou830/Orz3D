@@ -50,12 +50,12 @@ void App::doFrame()
 	}
 
 	// imgui window to control simulation speed
-	if (ImGui::Begin("Simulation Speed"))
+	if (ImGui::Begin(u8"更新速度"))
 	{
-		static char buffer[1024];
+		//static char buffer[1024];
 		ImGui::SliderFloat("Speed Factor", &speed_factor, 0.0f, 4.0f);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::InputText("Inputs", buffer, sizeof(buffer));
+		//ImGui::InputText("Inputs", buffer, sizeof(buffer));
 	}
 	ImGui::End();
 	cam.SpawnControlWindow();
