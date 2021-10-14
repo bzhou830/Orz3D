@@ -123,6 +123,10 @@ void Graphics::SetupDearImGui(HWND hWnd) const noexcept
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
 
+	//imgui中文显示中文支持
+	auto font = io.Fonts;
+	font->AddFontFromFileTTF("c:/windows/fonts/simhei.ttf", 13.0f, NULL, font->GetGlyphRangesChineseSimplifiedCommon());
+
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 
