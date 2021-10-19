@@ -1,6 +1,7 @@
 #pragma once
 #include "Graphics.h"
 #include "./Bindable/ConstantBuffers.h"
+#include "./Drawable/SolidSphere.h"
 
 class PointLight
 {
@@ -16,6 +17,7 @@ private:
 		dx::XMFLOAT4 pos;
 	};
 	dx::XMFLOAT4 pos = { 0.0f, 0.0f, 0.0f, 0.0f };
+	mutable SolidSphere mesh;
 	mutable PixelConstantBuffer<PointLightCBuf> cbuf;
 };
 

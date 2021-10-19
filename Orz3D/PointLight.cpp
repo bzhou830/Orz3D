@@ -1,9 +1,8 @@
 #include "PointLight.h"
 
 PointLight::PointLight(Graphics& gfx, float radius) :
-	cbuf(gfx)
+	mesh(gfx, radius), 	cbuf(gfx)
 {
-
 }
 
 void PointLight::SpawnControlWindow()
@@ -17,7 +16,8 @@ void PointLight::Reset()
 
 void PointLight::Draw(Graphics& gfx)
 {
-	
+	mesh.SetPos(pos);
+	mesh.Draw(gfx);
 }
 
 void PointLight::Bind(Graphics& gfx)

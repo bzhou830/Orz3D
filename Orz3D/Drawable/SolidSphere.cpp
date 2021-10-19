@@ -55,7 +55,7 @@ void SolidSphere::SetPos(dx::XMFLOAT4 pos)
 	this->pos = pos;
 }
 
-dx::XMMATRIX SolidSphere::GetTransfromXM() const
+dx::XMMATRIX SolidSphere::GetTransformXM() const noexcept
 {
 	return dx::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
