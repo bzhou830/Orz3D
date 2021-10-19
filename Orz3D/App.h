@@ -2,6 +2,7 @@
 #include "window.h"
 #include "BzTimer.h"
 #include "Camera.h"
+#include "PointLight.h"
 
 class App
 {
@@ -15,6 +16,7 @@ private:
 	Window wnd;
 	BzTimer timer;
 	Camera cam;
+	PointLight light;
 	float speed_factor = 0.3f;
 	std::vector<std::unique_ptr<class Box>> boxes;
 	std::vector<std::unique_ptr<class TexBox>> TexBoxes;

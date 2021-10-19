@@ -142,6 +142,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Drawable\Box.cpp" />
     <ClCompile Include="Drawable\Drawable.cpp" />
+    <ClCompile Include="Drawable\SolidSphere.cpp" />
     <ClCompile Include="Drawable\TexBox.cpp" />
     <ClCompile Include="DxErr\dxerr.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="window.cpp" />
     <ClCompile Include="WindowsMessageMap.cpp" />
@@ -187,6 +189,7 @@
     <ClInclude Include="Drawable\IndexedTriangleList.h" />
     <ClInclude Include="Drawable\Plane.h" />
     <ClInclude Include="Drawable\Prism.h" />
+    <ClInclude Include="Drawable\SolidSphere.h" />
     <ClInclude Include="Drawable\Sphere.h" />
     <ClInclude Include="Drawable\TexBox.h" />
     <ClInclude Include="DxErr\dxerr.h" />
@@ -203,6 +206,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="PointLight.h" />
     <ClInclude Include="renderdoc_app.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Surface.h" />
@@ -232,6 +236,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
     </FxCompile>
+    <FxCompile Include="Shader\SolidPS.hlsl" />
+    <FxCompile Include="Shader\SolidVS.hlsl" />
     <FxCompile Include="Shader\VertexShader.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
