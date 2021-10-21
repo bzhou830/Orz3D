@@ -23,4 +23,5 @@ void PointLight::Draw(Graphics& gfx)
 void PointLight::Bind(Graphics& gfx)
 {
 	cbuf.Update(gfx, PointLightCBuf{ pos });
+	cbuf.Bind(gfx);
 }
