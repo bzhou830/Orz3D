@@ -5,11 +5,17 @@
 
 class TransformCbuf : public Bindable
 {
+private:
+	struct Transforms
+	{
+		DirectX::XMMATRIX modelViewProj;
+		DirectX::XMMATRIX model;
+	};
 public:
 	TransformCbuf(Graphics& gfx, const Drawable& parent);
 	void Bind(Graphics& gfx) noexcept override;
 private:
-	VertexConstantBuffer<DirectX::XMMATRIX> vcbuf;
+	static std::unique_ptr<VertexConstantBuffer<Transforms>> pVcbuf;
 	const Drawable& parent;
 };
 

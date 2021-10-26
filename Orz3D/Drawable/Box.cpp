@@ -32,8 +32,10 @@ Box::Box(Graphics& gfx,
 		struct Vertex
 		{
 			dx::XMFLOAT3 pos;
+			dx::XMFLOAT3 n;
 		};
-		auto model = Plane::Make<Vertex>();
+		auto model = Cube::Make<Vertex>();
+		model.SetNormalsIndependentFlat();
 		model.Transform(dx::XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
@@ -45,6 +47,7 @@ Box::Box(Graphics& gfx,
 		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
 
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
+		/*
 		struct ConstantBuffer2
 		{
 			struct
@@ -67,10 +70,11 @@ Box::Box(Graphics& gfx,
 			}
 		};
 		AddStaticBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
-
+		*/
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
 			{ "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "Normal", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
 
