@@ -14,7 +14,7 @@ cbuffer LightCBuf
 	float3 lightPos;
 };
 
-static const float3 materialColor = { 0.7f,0.7f,0.9f };
+static const float3 materialColor = { 1.0f,0.7f,0.9f };
 static const float3 ambient = { 0.05f,0.05f,0.05f };
 static const float3 diffuseColor = { 1.0f,1.0f,1.0f };
 static const float diffuseIntensity = 1.0f;
